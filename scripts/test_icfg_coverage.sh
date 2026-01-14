@@ -2,17 +2,31 @@
 set -Eeuo pipefail
 
 # ============================================================
+# LOAD SUT CONFIG
+# ============================================================
+
+readonly SUT_CONFIG_FILE="${1:-/configs/sut.config}"
+
+if [[ ! -f "$SUT_CONFIG_FILE" ]]; then
+  echo "[ERROR] SUT config not found: $SUT_CONFIG_FILE" >&2
+  exit 1
+fi
+
+# shellcheck source=/dev/null
+source "$SUT_CONFIG_FILE"
+
+# Validate required variables from SUT config
+: "${JDART_EXAMPLES_DIR:?JDART_EXAMPLES_DIR not set}"
+: "${CLASS_PATH:?CLASS_PATH not set}"
+: "${TEST_CLASS_PATH:?TEST_CLASS_PATH not set}"
+: "${FULLY_QUALIFIED_METHOD_SIGNATURE:?FULLY_QUALIFIED_METHOD_SIGNATURE not set}"
+: "${PROJECT_PREFIXES:?PROJECT_PREFIXES not set}"
+
+# ============================================================
 # CONFIG
 # ============================================================
-readonly HOME_DIR="$HOME"
-
-# Specific to the SUT
-readonly JDART_EXAMPLES_DIR="$HOME_DIR/dev/jdart-examples"
-readonly CLASS_PATH="$JDART_EXAMPLES_DIR/out/production/jdart-examples"
-readonly TEST_CLASS_PATH="$JDART_EXAMPLES_DIR/out/test/jdart-examples"
-
-readonly FULLY_QUALIFIED_METHOD_SIGNATURE="<test.testsuites.Test: int bar(int)>"
-readonly PROJECT_PREFIXES="test.testsuites" # Comma-separated list of project prefixes
+# Shared data volume with the JDart container
+readonly DATA_DIR="${2:-/data}"
 
 # Tools inside image
 readonly PATHCOV_PROJECT_DIR="${PATHCOV_PROJECT_DIR:?PATHCOV_PROJECT_DIR is not set}"  # This variable is injected at container runtime via ENV
