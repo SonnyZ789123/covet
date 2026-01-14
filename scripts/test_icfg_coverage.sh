@@ -2,29 +2,32 @@
 set -Eeuo pipefail
 
 # ============================================================
-# LOAD SUT CONFIG
+# LOAD CONFIGURABLE SUT CONFIG
 # ============================================================
 
 readonly SUT_CONFIG_FILE="${1:-/configs/sut.config}"
 
-if [[ ! -f "$SUT_CONFIG_FILE" ]]; then
+[[ -f "$SUT_CONFIG_FILE" ]] || {
   echo "[ERROR] SUT config not found: $SUT_CONFIG_FILE" >&2
   exit 1
-fi
+}
 
 # shellcheck source=/dev/null
 source "$SUT_CONFIG_FILE"
 
-# Validate required variables from SUT config
-: "${JDART_EXAMPLES_DIR:?JDART_EXAMPLES_DIR not set}"
 : "${CLASS_PATH:?CLASS_PATH not set}"
 : "${TEST_CLASS_PATH:?TEST_CLASS_PATH not set}"
 : "${FULLY_QUALIFIED_METHOD_SIGNATURE:?FULLY_QUALIFIED_METHOD_SIGNATURE not set}"
-: "${PROJECT_PREFIXES:?PROJECT_PREFIXES not set}"
 
 # ============================================================
-# CONFIG
+# FIXED CONFIG
 # ============================================================
+
+readonly SUT_DIR="/sut"
+
+readonly CLASS_PATH="${SUT_DIR}/${CLASS_PATH}"
+readonly TEST_CLASS_PATH="${SUT_DIR}/${TEST_CLASS_PATH}"
+
 # Shared data volume with the JDart container
 readonly DATA_DIR="${2:-/data}"
 
