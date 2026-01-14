@@ -47,6 +47,17 @@ RUN git checkout v1.0.0
 RUN mvn -B clean install -DskipTests
 
 ###############################################################################
+# Install JUnit Platform Console Standalone
+###############################################################################
+ENV JUNIT_VERSION=1.12.2
+ENV JUNIT_CONSOLE_JAR=/opt/junit/junit-platform-console-standalone-${JUNIT_VERSION}.jar
+
+RUN mkdir -p /opt/junit && \
+    curl -fsSL \
+      https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${JUNIT_VERSION}/junit-platform-console-standalone-${JUNIT_VERSION}.jar \
+      -o ${JUNIT_CONSOLE_JAR}
+
+###############################################################################
 # Convenience env vars (VERY useful in scripts)
 ###############################################################################
 ENV PATHCOV_JAR=${PATHCOV_DIR}/pathcov/target/pathcov-1.0.0.jar
