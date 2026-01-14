@@ -41,10 +41,10 @@ readonly BLOCK_MAP_PATH="$DATA_DIR/blockmaps/icfg_block_map.json"
 readonly COVERAGE_PATHS_OUTPUT_PATH="$DATA_DIR/coverage/coverage_paths.json"
 readonly JDART_INSTRUCTION_PATHS_OUTPUT_PATH="$DATA_DIR/coverage/jdart_instruction_paths.json"
 
-readonly VISUALIZATION_DIR="$PATHCOV_DIR/out/visualization/icfg/coverage"
+# readonly VISUALIZATION_DIR="$PATHCOV_DIR/out/visualization/icfg/coverage"
 
-readonly DOT_FILE_NAME="coverage_graph.dot" # See application.properties in pathcov
-readonly SVG_FILE_NAME="coverage_graph.svg"
+# readonly DOT_FILE_NAME="coverage_graph.dot" # See application.properties in pathcov
+# readonly SVG_FILE_NAME="coverage_graph.svg"
 
 # ============================================================
 # LOGGING
@@ -135,8 +135,8 @@ main() {
   generate_block_map
   run_junit_with_agent
   generate_jdart_instruction_coverage
-  generate_coverage_graph
-  generate_svg
+  # generate_coverage_graph
+  # generate_svg
   log "✅ Pipeline completed successfully"
 }
 
