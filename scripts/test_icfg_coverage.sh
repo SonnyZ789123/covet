@@ -44,11 +44,6 @@ readonly BLOCK_MAP_PATH="$DATA_DIR/blockmaps/icfg_block_map.json"
 readonly COVERAGE_PATHS_OUTPUT_PATH="$DATA_DIR/coverage/coverage_paths.json"
 readonly JDART_INSTRUCTION_PATHS_OUTPUT_PATH="$DATA_DIR/coverage/jdart_instruction_paths.json"
 
-# readonly VISUALIZATION_DIR="$PATHCOV_DIR/out/visualization/icfg/coverage"
-
-# readonly DOT_FILE_NAME="coverage_graph.dot" # See application.properties in pathcov
-# readonly SVG_FILE_NAME="coverage_graph.svg"
-
 # ============================================================
 # LOGGING
 # ============================================================
@@ -109,28 +104,6 @@ generate_jdart_instruction_coverage() {
   popd > /dev/null
 }
 
-# generate_coverage_graph() {
-#   log "⚙️ Generating coverage graph"
-
-#   pushd "$PATHCOV_DIR" > /dev/null
-
-#   mvn exec:java \
-#     -Dexec.mainClass="com.kuleuven.icfg.coverage.GenerateCoverageGraph" \
-#     -Dexec.args="$CLASS_PATH \"$FULLY_QUALIFIED_METHOD_SIGNATURE\" $COVERAGE_PATHS_OUTPUT_PATH $BLOCK_MAP_PATH"
-
-#   popd > /dev/null
-# }
-
-# generate_svg() {
-#   log "⚙️ Generating SVG visualization"
-
-#   dot -Tsvg \
-#     "$VISUALIZATION_DIR/$DOT_FILE_NAME" \
-#     -o "$VISUALIZATION_DIR/$SVG_FILE_NAME"
-
-#   open "$VISUALIZATION_DIR/$SVG_FILE_NAME"
-# }
-
 # ============================================================
 # MAIN
 # ============================================================
@@ -138,8 +111,6 @@ main() {
   generate_block_map
   run_junit_with_agent
   generate_jdart_instruction_coverage
-  # generate_coverage_graph
-  # generate_svg
   log "✅ Pipeline completed successfully"
 }
 
