@@ -1,0 +1,10 @@
+# Point to your compiled classes
+# Hard-coded knowledge of that it's run in a docker container where the code is at /sut
+classpath=/sut/out/production/jdart-examples
+
+# Class under analysis
+target=test.testsuites.Test
+
+concolic.method.bar=test.testsuites.Test.bar(a:int)
+
+concolic.method=bar
