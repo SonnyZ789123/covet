@@ -1,0 +1,19 @@
+# ============================================================
+# SUT configuration
+# ============================================================
+# Paths should be relative to the root given in the .env file
+sut:
+  compiled_root: out/production/jdart-examples
+  test_root: out/test/jdart-examples
+
+target:
+  class: test.testsuites.Test
+  method: bar
+  return: int
+  parameters:
+    - name: a
+      type: int
+
+analysis:
+  project_prefixes:
+    - test.testsuites
