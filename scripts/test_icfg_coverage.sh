@@ -14,17 +14,19 @@ readonly TEST_CLASS_PATH="$JDART_EXAMPLES_DIR/out/test/jdart-examples"
 readonly FULLY_QUALIFIED_METHOD_SIGNATURE="<test.testsuites.Test: int bar(int)>"
 readonly PROJECT_PREFIXES="test.testsuites" # Comma-separated list of project prefixes
 
-# Fixed config
-readonly JUNIT_CONSOLE_JAR="$HOME_DIR/.m2/repository/org/junit/platform/junit-platform-console-standalone/1.12.2/junit-platform-console-standalone-1.12.2.jar"
+# Tools inside image
+readonly PATHCOV_PROJECT_DIR="${PATHCOV_DIR:?PATHCOV_DIR is not set}"  # This variable is injected at container runtime via ENV
+readonly PATHCOV_DIR="$PATHCOV_PROJECT_DIR/pathcov"
 
-readonly AGENT_JAR="$HOME_DIR/dev/master-thesis/coverage-agent/target/coverage-agent-1.0.0.jar"
+readonly AGENT_JAR="${COVERAGE_AGENT_JAR:?COVERAGE_AGENT_JAR is not set}"  # This variable is injected at container runtime via ENV
 
-readonly COVERAGE_PATHS_OUTPUT_PATH="$HOME_DIR/dev/master-thesis/data/coverage_paths.json"
-readonly BLOCK_MAP_PATH="$HOME_DIR/dev/master-thesis/pathcov/out/icfg_block_map.json"
+readonly JUNIT_CONSOLE_JAR="${JUNIT_CONSOLE_JAR:?JUNIT_CONSOLE_JAR is not set}"  # This variable is injected at container runtime via ENV
 
-readonly JDART_INSTRUCTION_PATHS_OUTPUT_PATH="$HOME_DIR/dev/master-thesis/data/jdart_instruction_paths.json"
+# Outputs
+readonly BLOCK_MAP_PATH="$DATA_DIR/blockmaps/icfg_block_map.json"
+readonly COVERAGE_PATHS_OUTPUT_PATH="$DATA_DIR/coverage/coverage_paths.json"
+readonly JDART_INSTRUCTION_PATHS_OUTPUT_PATH="$DATA_DIR/coverage/jdart_instruction_paths.json"
 
-readonly PATHCOV_DIR="$HOME_DIR/dev/master-thesis/pathcov"
 readonly VISUALIZATION_DIR="$PATHCOV_DIR/out/visualization/icfg/coverage"
 
 readonly DOT_FILE_NAME="coverage_graph.dot" # See application.properties in pathcov
