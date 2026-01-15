@@ -6,7 +6,7 @@
 shell=gov.nasa.jpf.jdart.JDart
 symbolic.dp=z3
 symbolic.dp.z3.bitvectors=true
-jdart.exploration=gov.nasa.jpf.jdart.exploration.DFSStrategy
+jdart.exploration=gov.nasa.jpf.jdart.exploration.CoverageHeuristicStrategy(/configs/coverage_heuristic.config)
 
 ###############################################################################
 #
