@@ -14,7 +14,7 @@ services:
     tty: true
 
   jdart:
-    image: jdart-image:1.0.0
+    image: jdart-image:1.0.1
     platform: linux/amd64
     environment:
       - ENV=prod
