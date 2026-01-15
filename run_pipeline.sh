@@ -10,7 +10,7 @@ PATHCOV_SERVICE="pathcov"
 JDART_SERVICE="jdart"
 
 # Scripts / configs inside containers
-PATHCOV_SCRIPT="/scripts/test_icfg_coverage.sh"
+PATHCOV_SCRIPT="/scripts/generate_pathcov.sh"
 SUT_CONFIG="/configs/sut.config"
 JDART_JPF_CONFIG="/configs/sut.jpf"
 
@@ -31,7 +31,7 @@ log() {
 
 main() {
   log "⚙️ Generating tool-specific configs from sut.yml"
-  python3 ./scripts/generate_sut_configs.py
+  python3 scripts/generate_sut_configs.py
 
   log "⚙️ Starting containers"
   docker compose up -d

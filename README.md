@@ -46,7 +46,7 @@ All stages are fully containerized and orchestrated via Docker Compose.
 │   ├── configs
 │   │   └── sut.config            # AUTO-GENERATED from sut.yml
 │   └── scripts
-│       └── test_icfg_coverage.sh
+│       └── generate_pathcov.sh
 ├── scripts
 │   └── generate_sut_configs.py   # Generates tool-specific configs from sut.yml
 ├── run_pipeline.sh               # Single entry point for running the pipeline
