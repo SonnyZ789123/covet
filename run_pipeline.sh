@@ -30,6 +30,9 @@ log() {
 # ============================================================
 
 main() {
+  log "⚙️ Generating tool-specific configs from sut.yml"
+  python3 ./scripts/generate_sut_configs.py
+
   log "⚙️ Starting containers"
   docker compose up -d
 
