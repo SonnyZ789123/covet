@@ -94,6 +94,10 @@ Example inside the container:
 /sut/out/test/jdart-examples
 ```
 
+> **Note**
+> `.env` is automatically read by Docker Compose.
+> It is also explicitly loaded by `run_pipeline.sh` so that host-side scripts see the same variables.
+
 ---
 
 ## Step 2: Define the SUT and target method (`configs/sut.yml`)
@@ -127,7 +131,9 @@ analysis:
     - test.testsuites
 ```
 
-You only edit **this file** to change the SUT or target method.
+You only edit **this file** to change the SUT or the analyzed method.
+
+All tool-specific configurations are **derived automatically** from this file.
 
 ---
 
@@ -168,7 +174,7 @@ jdart.exploration=gov.nasa.jpf.jdart.exploration.DFSStrategy
 jdart.exploration=gov.nasa.jpf.jdart.exploration.BFSStrategy
 ```
 
-These settings are combined with the auto-generated `sut_gen.jpf` during execution.
+During execution, this file is **combined** with the auto-generated JDart configuration (`sut_gen.jpf`).
 
 ---
 
@@ -210,19 +216,58 @@ The volume persists across container runs.
 
 ---
 
+## Development Mode (Optional)
+
+By default, the pipeline runs in **production mode**, using **pre-built Docker images**.
+
+For development (e.g. modifying Pathcov or the coverage agent locally), you can enable **development mode** using a Docker Compose override file.
+
+### docker-compose.override.yml
+
+Create a `docker-compose.override.yml` file and bind-mount your locally cloned tools:
+
+```yaml
+services:
+  pathcov:
+    volumes:
+      - ../pathcov:/work/pathcov
+    environment:
+      PATHCOV_PROJECT_DIR=/work/pathcov
+      COVERAGE_AGENT_JAR=/work/pathcov/coverage-agent/target/coverage-agent-1.0.0.jar
+      JUNIT_CONSOLE_JAR=/work/pathcov/tools/junit-platform-console-standalone.jar
+```
+
+Key points:
+
+* `docker-compose.override.yml` is **automatically applied** by Docker Compose
+* Production images remain unchanged
+* You can override:
+
+  * tool source directories
+  * JAR locations
+  * other environment variables as needed
+
+No script changes are required.
+
+---
+
 ## Docker Architecture
 
 ### Docker Compose
 
 * **pathcov container**
+
   * Runs coverage instrumentation and graph generation
   * Mounts:
+
     * `/sut` (SUT)
     * `/configs` (Pathcov configs)
     * `/data` (shared artifacts)
 * **jdart container**
+
   * Runs JDart/JPF
   * Mounts:
+
     * `/sut` (SUT)
     * `/configs` (JDart configs)
     * `/data` (shared artifacts)
@@ -256,12 +301,16 @@ cd coverage-guided-concolic-pipeline
 
 python3 -m pip install -r requirements.txt
 
-echo 'SUT_DIR=$HOME/dev/jdart-examples' > .env
+cat <<EOF > .env
+ENV=dev
+SUT_DIR=$HOME/dev/jdart-examples
+EOF
 
 vim configs/sut.yml
 vim jdart/configs/sut.jpf   # optional
 
 ./run_pipeline.sh
+
 ```
 
 ---
