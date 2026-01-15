@@ -42,6 +42,7 @@ PROJECT_PREFIXES="{project_prefixes}"
 """
 
 pathcov_out = ROOT / "pathcov/configs/sut.config"
+pathcov_out.parent.mkdir(parents=True, exist_ok=True)   # ← FIX
 pathcov_out.write_text(pathcov_cfg)
 
 # -------------------------------
@@ -66,6 +67,7 @@ jdart.tests.dir=/sut/{jdart_tests_dir_out}
 """
 
 jdart_out = ROOT / "jdart/configs/sut_gen.jpf"
+jdart_out.parent.mkdir(parents=True, exist_ok=True)      # ← FIX
 jdart_out.write_text(jdart_cfg)
 
 print("[OK] Generated:")
