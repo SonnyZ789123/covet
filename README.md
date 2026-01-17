@@ -263,12 +263,20 @@ Create a `docker-compose.override.yml` file and bind-mount your locally cloned t
 services:
   pathcov:
     volumes:
-      - ../pathcov:/work/pathcov
+      - /path/to/outptut/data:/data
+      - /path/to/local-pathcov:/pathcov-project/pathcov
+      - /path/to/local-coverage-agent:/pathcov-project/coverage-agent
     environment:
       PATHCOV_PROJECT_DIR=/work/pathcov
       COVERAGE_AGENT_JAR=/work/pathcov/coverage-agent/target/coverage-agent-1.0.0.jar
       JUNIT_CONSOLE_JAR=/work/pathcov/tools/junit-platform-console-standalone.jar
+
+  jdart:
+    volumes:
+      - /path/to/outptut/data:/data
 ```
+
+It is important that the /data mouts between the pathcov and the jdart service are the same.
 
 In your `.env` file, set `ENV=dev` and run the pipeline.
 
@@ -320,6 +328,44 @@ vim jdart/configs/sut.jpf   # optional
 ./run_pipeline.sh
 
 ```
+
+## How to see the coverage graph 
+
+In production mode, the coverage graph is generated in a Docker volume. To easily see the coverage graph, run the pipeline in development mode by setting `ENV=dev` in your `.env` file. Specify a bind-mount to your output folder in the `docker-compose.override.yml` file: 
+
+```
+services:
+  pathcov:
+    environment:
+      - ENV=dev
+
+    volumes:
+      - ./development/data:/data
+
+  jdart:
+    volumes:
+      - ./development/data:/data
+```
+
+After running the pipeline, which runs `scripts/generate_pathcov.sh` in the pathcov-container, a `coverage_graph.svg` file is created in the specified /data folder with path `/data/visualization/icfg/coverage/coverage_graph.svg`.
+
+Then just execute `open data/visualization/icfg/coverage/coverage_graph.svg`. 
+
+### See coverage graph after test suite generation
+
+After running the pipeline with `jdart.tests.gen=true`, copy-paste the test file(s) in the corresponding tests package. Go into the pathcov-container by runnning: 
+
+```bash
+docker exec -it pathcov bash
+```
+
+And execute the `generate_pathcov.sh` script again by executing: 
+
+```bash
+/scripts/generate_pathcov.sh
+```
+
+Then open the `coverage_graph.svg` again as explained above. 
 
 ## About JDart execution 
 
