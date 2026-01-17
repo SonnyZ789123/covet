@@ -6,14 +6,15 @@
 shell=gov.nasa.jpf.jdart.JDart
 symbolic.dp=z3
 symbolic.dp.z3.bitvectors=true
-jdart.exploration=gov.nasa.jpf.jdart.exploration.CoverageHeuristicStrategy(/configs/coverage_heuristic.config)
 
 ###############################################################################
 #
 # logging and jpf output
 #
-log.finest=jdart
-log.info=constraints
+log.info=jdart,constraints
+log.warning=
+log.finest=
+
 
 # suppress jpf output
 report.console.start=
@@ -23,4 +24,10 @@ report.console.property_violation=
 jdart.configs.all_fields_symbolic.symbolic.include=this.*
 
 
+###############################################################################
+#
+# default settings for pipeline
+#   
+jdart.exploration=gov.nasa.jpf.jdart.exploration.CoverageHeuristicStrategy(/configs/coverage_heuristic.config)
 
+jdart.tests.gen=true

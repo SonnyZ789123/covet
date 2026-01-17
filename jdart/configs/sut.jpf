@@ -4,10 +4,7 @@
 # ============================================================
 # SUT configuration
 # ============================================================
-log.finest=jdart,jdart.testsuites
 
-jdart.exploration=gov.nasa.jpf.jdart.exploration.CoverageHeuristicStrategy(/configs/coverage_heuristic.config)
 
-jdart.tests.gen=true
 
 
