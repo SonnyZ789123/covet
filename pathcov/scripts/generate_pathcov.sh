@@ -90,7 +90,9 @@ run_junit_with_agent() {
   set -e
 
   if [[ $exit_code -ne 0 ]]; then
-    warn "Some JUnit tests failed, continuing anyway"
+    warn "========================================================="
+    warn "    ⚠️ Some JUnit tests FAILED, continuing anyway ⚠️"
+    warn "========================================================="
   fi
 
   log "✅ Running JUnit tests completed"
