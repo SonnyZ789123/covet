@@ -97,19 +97,10 @@ RUN mkdir -p /root/.jconstraints/extensions && \
 # Install JDart
 ###############################################################################
 WORKDIR ${JDART_DIR}
-RUN git clone --branch v1.0.1 https://github.com/SonnyZ789123/jdart.git
+RUN git clone --branch v1.0.2 https://github.com/SonnyZ789123/jdart.git
 WORKDIR ${JDART_DIR}/jdart
+RUN git checkout v1.0.2
 RUN ant
-
-# If you want to modify Jdart, remove the lines above, and mount your local JDart repository:
-# docker run -it --name jdart-container \
-#   -v "$HOME/path/to/jdart:/jdart-project/jdart" \
-#   jdart \
-#   /bin/bash
-#
-# Then build JDart inside the container:
-# cd /jdart-project/jdart
-# ant
 
 WORKDIR ${JDART_DIR}
 
