@@ -37,6 +37,7 @@ pathcov_cfg = f"""# ============================================================
 CLASS_PATH="{compiled_root}"
 TEST_CLASS_PATH="{test_root}"
 
+TARGET_CLASS="{cls}"
 FULLY_QUALIFIED_METHOD_SIGNATURE="{pathcov_sig}"
 PROJECT_PREFIXES="{project_prefixes}"
 """
