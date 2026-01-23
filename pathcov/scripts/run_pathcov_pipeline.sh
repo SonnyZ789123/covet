@@ -50,7 +50,7 @@ readonly JUNIT_CONSOLE_JAR="${JUNIT_CONSOLE_JAR:?JUNIT_CONSOLE_JAR is not set}" 
 readonly BLOCK_MAP_PATH="$DATA_DIR/blockmaps/icfg_block_map.json"
 
 readonly INTELLIJ_COVERAGE_AGENT_CONFIG_PATH="$DATA_DIR/intellij-coverage/intellij_coverage_agent.args"
-readonly INTELLIJ_COVERAGE_REPORT_PATH="$DATA_DIR/intellij-coverage/intellij-coverage-report.ic"
+readonly INTELLIJ_COVERAGE_REPORT_PATH="$DATA_DIR/intellij-coverage/intellij_coverage_report.ic"
 
 readonly EXPORTER_CONFIG_PATH="$DATA_DIR/intellij-coverage/intellij_coverage_exporter_config.json"
 readonly COVERAGE_EXPORT_OUTPUT_PATH="$DATA_DIR/coverage/coverage_data.json"
