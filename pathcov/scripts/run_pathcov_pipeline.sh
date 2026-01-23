@@ -143,7 +143,7 @@ generate_coverage_graph() {
 
   mvn exec:java \
     -Dexec.mainClass="com.kuleuven.icfg.coverage.GenerateCoverageGraph" \
-    -Dexec.args="$CLASS_PATH \"$FULLY_QUALIFIED_METHOD_SIGNATURE\" $COVERAGE_PATHS_OUTPUT_PATH $BLOCK_MAP_PATH $VISUALIZATION_DIR/$DOT_FILE_NAME"
+    -Dexec.args="$CLASS_PATH \"$FULLY_QUALIFIED_METHOD_SIGNATURE\" $COVERAGE_EXPORT_OUTPUT_PATH $BLOCK_MAP_PATH $VISUALIZATION_DIR/$DOT_FILE_NAME"
 
   popd > /dev/null
 }
