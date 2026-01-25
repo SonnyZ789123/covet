@@ -115,7 +115,7 @@ run_junit_with_agent() {
   log "✅ Running JUnit tests completed"
 }
 
-generate_line_coverage_json_export() {
+generate_coverage_data() {
   log "⚙️ Generating line coverage JSON export"
 
   pushd "$PATHCOV_DIR" > /dev/null
@@ -162,7 +162,7 @@ generate_svg() {
 main() {
   generate_block_map
   run_junit_with_agent
-  generate_line_coverage_json_export
+  generate_coverage_data
   generate_coverage_graph
   generate_svg
   log "✅ Pipeline completed successfully"
