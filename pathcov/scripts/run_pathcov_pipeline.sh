@@ -74,18 +74,6 @@ warn() {
 # ============================================================
 # STEPS
 # ============================================================
-generate_block_map() {
-  log "⚙️ Generating CFG block map for $FULLY_QUALIFIED_METHOD_SIGNATURE"
-
-  pushd "$PATHCOV_DIR" > /dev/null
-
-  mvn exec:java \
-    -Dexec.mainClass="com.kuleuven.icfg.GenerateBlockMap" \
-    -Dexec.args="$CLASS_PATH \"$FULLY_QUALIFIED_METHOD_SIGNATURE\" $BLOCK_MAP_PATH $PROJECT_PREFIXES"
-
-  popd > /dev/null
-}
-
 run_junit_with_agent() {
   log "⚙️ Running JUnit tests with coverage agent"
 
@@ -116,7 +104,7 @@ run_junit_with_agent() {
 }
 
 generate_coverage_data() {
-  log "⚙️ Generating line coverage JSON export"
+  log "⚙️ Exporting coverage data to JSON format"
 
   pushd "$PATHCOV_DIR" > /dev/null
 
@@ -136,6 +124,23 @@ generate_coverage_data() {
   popd > /dev/null
 }
 
+generate_block_map() {
+  log "⚙️ Generating block map for $FULLY_QUALIFIED_METHOD_SIGNATURE"
+
+  pushd "$PATHCOV_DIR" > /dev/null
+
+  mvn exec:java \
+    -Dexec.mainClass="com.kuleuven.icfg.GenerateBlockMap" \
+    -Dexec.args=" \
+      $CLASS_PATH \
+      \"$FULLY_QUALIFIED_METHOD_SIGNATURE\" \
+      $COVERAGE_EXPORT_OUTPUT_PATH \
+      $BLOCK_MAP_PATH \
+      $PROJECT_PREFIXES"
+
+  popd > /dev/null
+}
+
 generate_coverage_graph() {
   log "⚙️ Generating coverage graph"
 
@@ -146,7 +151,6 @@ generate_coverage_graph() {
     -Dexec.args=" \
       $CLASS_PATH \
       \"$FULLY_QUALIFIED_METHOD_SIGNATURE\" \
-      $COVERAGE_EXPORT_OUTPUT_PATH \
       $BLOCK_MAP_PATH \
       $VISUALIZATION_DIR/$DOT_FILE_NAME \
       $PROJECT_PREFIXES"
@@ -166,9 +170,9 @@ generate_svg() {
 # MAIN
 # ============================================================
 main() {
-  generate_block_map
   run_junit_with_agent
   generate_coverage_data
+  generate_block_map
   generate_coverage_graph
   generate_svg
   log "✅ Pipeline completed successfully"
