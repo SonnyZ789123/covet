@@ -3,29 +3,24 @@
 # ============================================================
 # Paths should be relative to the root given in the .env file
 sut:
-  compiled_root: out/production/jdart-examples
-  test_root: out/test/jdart-examples
-  source_root: src/examples
+  compiled_root: target/classes
+  test_root: target/test-classes
+  source_root: src/main/java
+  run_tests_command: mvn -Dtest=LongDivisionTest test
   
 test_generation:
   generated_tests_dir_out: data/generated-tests
 
 target:
-  class: examples.OverallJDartExample
-  method: foo
+  class: com.thealgorithms.maths.LongDivision
+  method: divide
   return: int
   parameters:
-    - name: n
+    - name: dividend
       type: int
-    - name: m
+    - name: divisor
       type: int
-    - name: limit
-      type: long
-    - name: scale
-      type: double
-    - name: flag
-      type: boolean
 
 analysis:
   project_prefixes:
-    - examples
+    - com.thealgorithms.maths

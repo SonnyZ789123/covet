@@ -22,6 +22,7 @@ project_prefixes = ",".join(sut_cfg["analysis"]["project_prefixes"])
 compiled_root = sut_cfg["sut"]["compiled_root"]
 test_root = sut_cfg["sut"]["test_root"]
 source_root = sut_cfg["sut"]["source_root"]
+run_tests_command = sut_cfg["sut"]["run_tests_command"]
 jdart_tests_dir_out = sut_cfg["test_generation"]["generated_tests_dir_out"]
 
 # -------------------------------
@@ -42,6 +43,9 @@ SOURCE_PATH="{source_root}"
 TARGET_CLASS="{cls}"
 FULLY_QUALIFIED_METHOD_SIGNATURE="{pathcov_sig}"
 PROJECT_PREFIXES="{project_prefixes}"
+
+# Command to run tests
+RUN_TESTS_COMMAND="{run_tests_command}"
 """
 
 pathcov_out = ROOT / "pathcov/configs/sut.config"

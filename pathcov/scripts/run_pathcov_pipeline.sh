@@ -28,6 +28,7 @@ source "$SUT_CONFIG_FILE"
 : "${SOURCE_PATH:?SOURCE_PATH not set}"
 : "${TARGET_CLASS:?TARGET_CLASS not set}"
 : "${FULLY_QUALIFIED_METHOD_SIGNATURE:?FULLY_QUALIFIED_METHOD_SIGNATURE not set}"
+: "${RUN_TESTS_COMMAND:?RUN_TESTS_COMMAND not set}"
 
 # ============================================================
 # FIXED CONFIG
@@ -75,7 +76,7 @@ warn() {
 # STEPS
 # ============================================================
 run_junit_with_agent() {
-  log "⚙️ Running JUnit tests with coverage agent"
+  log "⚙️ Running test suite with coverage agent"
 
   
   "$SCRIPTS_DIR/make_coverage_agent_args.sh" \
@@ -84,12 +85,12 @@ run_junit_with_agent() {
     "$INTELLIJ_COVERAGE_AGENT_CONFIG_PATH"
 
   set +e
-  java \
-    -javaagent:"$AGENT_JAR=$INTELLIJ_COVERAGE_AGENT_CONFIG_PATH" \
-    -cp "$JUNIT_CONSOLE_JAR:$TEST_CLASS_PATH:$CLASS_PATH" \
-    org.junit.platform.console.ConsoleLauncher \
-    --scan-classpath \
-    > /dev/null 2>&1
+
+  # This is local 
+  JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS:-} -javaagent:$AGENT_JAR=$INTELLIJ_COVERAGE_AGENT_CONFIG_PATH" \
+
+  log "Running command: $RUN_TESTS_COMMAND"
+  eval "$RUN_TESTS_COMMAND"
 
   local exit_code=$?
   set -e
@@ -100,7 +101,7 @@ run_junit_with_agent() {
     warn "========================================================="
   fi
 
-  log "✅ Running JUnit tests completed"
+  log "✅ Running test suite completed"
 }
 
 generate_coverage_data() {
