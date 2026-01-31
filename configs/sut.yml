@@ -1,13 +1,16 @@
 # ============================================================
 # SUT configuration
 # ============================================================
-# Paths should be relative to the root given in the .env file
 sut:
+  # Paths should be relative to the root given in the .env file
   compiled_root: target/classes
   test_root: target/test-classes
   source_root: src/main/java
-  run_tests_command: mvn -Dtest=LongDivisionTest test
-  
+  # Optional deps_class_path: specify the classpath for the dependencies (colon-separated, test scope)
+  # The paths should be absolute and be in the DEPS_DIR defined in the .env
+  # if not specified, it will be auto-detected from the SUT_DIR, and should be in the DEPS_DIR defined in the .env
+  # deps_class_path:
+
 test_generation:
   generated_tests_dir_out: data/generated-tests
 

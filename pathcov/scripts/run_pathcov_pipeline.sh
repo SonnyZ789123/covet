@@ -28,7 +28,6 @@ source "$SUT_CONFIG_FILE"
 : "${SOURCE_PATH:?SOURCE_PATH not set}"
 : "${TARGET_CLASS:?TARGET_CLASS not set}"
 : "${FULLY_QUALIFIED_METHOD_SIGNATURE:?FULLY_QUALIFIED_METHOD_SIGNATURE not set}"
-: "${RUN_TESTS_COMMAND:?RUN_TESTS_COMMAND not set}"
 
 # ============================================================
 # FIXED CONFIG
@@ -86,11 +85,11 @@ run_junit_with_agent() {
 
   set +e
 
-  # This is local 
-  JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS:-} -javaagent:$AGENT_JAR=$INTELLIJ_COVERAGE_AGENT_CONFIG_PATH" \
-
-  log "Running command: $RUN_TESTS_COMMAND"
-  eval "$RUN_TESTS_COMMAND"
+java \
+  -javaagent:"$AGENT_JAR=$INTELLIJ_COVERAGE_AGENT_CONFIG_PATH" \
+  -cp "$JUNIT_CONSOLE_JAR:$CLASS_PATH:$TEST_CLASS_PATH${DEPS_CLASS_PATH:+:$DEPS_CLASS_PATH}" \
+  org.junit.platform.console.ConsoleLauncher \
+  --scan-classpath
 
   local exit_code=$?
   set -e
