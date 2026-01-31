@@ -6,6 +6,7 @@ import yaml
 
 from detect_deps_classpath import detect_build_tool, detect_deps_classpath, deps_dir_from_build_tool
 from rewrite_classpath import rewrite_classpath
+from generate_deps_compose import generate_deps_compose
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -37,25 +38,24 @@ jdart_tests_dir_out = sut_cfg["test_generation"]["generated_tests_dir_out"]
 # -------------------------------
 # Get the deps classpath
 # -------------------------------
-load_dotenv(dotenv_path=Path(".env"))
+load_dotenv(dotenv_path=Path("sut.env"))
 
 sut_dir = os.getenv("SUT_DIR")
-
 if not sut_dir:
-    raise RuntimeError("SUT_DIR not set in .env")
+    raise RuntimeError("SUT_DIR not set in sut.env")
 
 deps_dir = os.getenv("DEPS_DIR")
-
-if not deps_dir and (deps_class_path is None or deps_class_path != ""):
-    build_tool = detect_build_tool(Path(sut_dir))
-    deps_dir = str(deps_dir_from_build_tool(build_tool, Path(sut_dir))) 
 
 load_dotenv(dotenv_path=Path("container.env"))
 
 container_deps_dir = os.getenv("CONTAINER_DEPS_DIR")
-
 if not container_deps_dir:
     raise RuntimeError("CONTAINER_DEPS_DIR not set in container.env")
+
+if not deps_dir and (deps_class_path is None or deps_class_path != ""):
+    build_tool = detect_build_tool(Path(sut_dir))
+    deps_dir = str(deps_dir_from_build_tool(build_tool, Path(sut_dir)))
+    generate_deps_compose(deps_dir, container_deps_dir)
 
 # Rewrite deps classpath to container paths
 deps_cp = None
