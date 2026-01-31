@@ -1,5 +1,6 @@
 .DS_Store
 .env
+scripts/__pycache__/
 
 # Generated data directory for development environment
 development/data
