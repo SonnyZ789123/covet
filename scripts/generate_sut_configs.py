@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 import yaml
 
-from detect_deps_classpath import detect_build_tool, detect_test_deps_classpath, deps_dir_from_build_tool
+from detect_deps_classpath import detect_build_tool, detect_runtime_deps_classpath, detect_test_deps_classpath, deps_dir_from_build_tool
 from rewrite_classpath import rewrite_classpath
 from generate_deps_compose import generate_deps_compose
 
@@ -28,10 +28,16 @@ project_prefixes = ",".join(sut_cfg["analysis"]["project_prefixes"])
 compiled_root = sut_cfg["sut"]["compiled_root"]
 test_root = sut_cfg["sut"]["test_root"]
 source_root = sut_cfg["sut"]["source_root"]
-deps_class_path = None 
+
+test_deps_classpath = None 
 # Differentiate between not set and empty
-if "deps_class_path" in sut_cfg["sut"]:
-    deps_class_path = "" if not sut_cfg["sut"]["deps_class_path"] else sut_cfg["sut"]["deps_class_path"]
+if "test_deps_classpath" in sut_cfg["sut"]:
+    test_deps_classpath = "" if not sut_cfg["sut"]["test_deps_classpath"] else sut_cfg["sut"]["test_deps_classpath"]
+
+runtime_deps_classpath = None 
+# Differentiate between not set and empty
+if "runtime_deps_classpath" in sut_cfg["sut"]:
+    runtime_deps_classpath = "" if not sut_cfg["sut"]["runtime_deps_classpath"] else sut_cfg["sut"]["runtime_deps_classpath"]
 
 junit_options = sut_cfg["sut"].get("junit_options", None)
 
@@ -54,26 +60,52 @@ container_deps_dir = os.getenv("CONTAINER_DEPS_DIR")
 if not container_deps_dir:
     raise RuntimeError("CONTAINER_DEPS_DIR not set in container.env")
 
-if not deps_dir and (deps_class_path is None or deps_class_path != ""):
+has_potentially_runtime_deps = runtime_deps_classpath is None or runtime_deps_classpath != ""
+has_potentially_test_deps = test_deps_classpath is None or test_deps_classpath != ""
+
+# deps_dir is only necessary if we have potentially dependencies to mount
+if not deps_dir and (has_potentially_runtime_deps or has_potentially_test_deps):
     build_tool = detect_build_tool(Path(sut_dir))
     deps_dir = str(deps_dir_from_build_tool(build_tool, Path(sut_dir)))
+
+# Create the mount if necessary
+if has_potentially_runtime_deps or has_potentially_test_deps:
+    # fail if the deps_dir does not exist
+    if not Path(deps_dir).exists():
+        raise RuntimeError(f"DEPS_DIR '{deps_dir}' does not exist, but is required to mount dependencies into the container.")
+
     generate_deps_compose(deps_dir, container_deps_dir)
 
-# Rewrite deps classpath to container paths
-deps_cp = None
-# Auto-detect classpath
-if deps_class_path is None:
-    raw_cp = detect_test_deps_classpath(sut_dir) if deps_class_path is None else deps_class_path
-    deps_cp = rewrite_classpath(deps_dir, container_deps_dir, raw_cp)
-# deps_class_path override, and it's not empty
-elif deps_class_path != "":
-    deps_cp = rewrite_classpath(deps_dir, container_deps_dir, deps_class_path)
 
-has_deps = deps_cp is not None
+runtime_deps_cp = None
+# Auto-detect classpath
+if test_deps_classpath is None:
+    raw_runtime_cp = detect_runtime_deps_classpath(sut_dir) if test_deps_classpath is None else test_deps_classpath
+    runtime_deps_cp = rewrite_classpath(deps_dir, container_deps_dir, raw_runtime_cp)
+# test_deps_classpath override, and it's not empty
+elif test_deps_classpath != "":
+    runtime_deps_cp = rewrite_classpath(deps_dir, container_deps_dir, test_deps_classpath)
+
+has_runtime_deps = runtime_deps_cp is not None
+
+test_deps_cp = None
+# Auto-detect classpath
+if test_deps_classpath is None:
+    raw_test_cp = detect_test_deps_classpath(sut_dir) if test_deps_classpath is None else test_deps_classpath
+    test_deps_cp = rewrite_classpath(deps_dir, container_deps_dir, raw_test_cp)
+# test_deps_classpath override, and it's not empty
+elif test_deps_classpath != "":
+    test_deps_cp = rewrite_classpath(deps_dir, container_deps_dir, test_deps_classpath)
+
+has_test_deps = test_deps_cp is not None
 
 # -------------------------------
 # Generate Pathcov config
 # -------------------------------
+container_sut_dir = os.getenv("CONTAINER_SUT_DIR")
+if not container_sut_dir:
+    raise RuntimeError("CONTAINER_SUT_DIR not set in container.env")
+
 pathcov_sig = f"<{cls}: {ret} {method}({param_types})>"
 
 pathcov_cfg = f"""# ============================================================
@@ -82,12 +114,12 @@ pathcov_cfg = f"""# ============================================================
 # Paths should be relative to the root given in the .env file
 
 # Compiled classes
-CLASS_PATH="{compiled_root}"
-TEST_CLASS_PATH="{test_root}"
-SOURCE_PATH="{source_root}"
+COMPILED_ROOT="{container_sut_dir}/{compiled_root}"
+COMPILED_TEST_ROOT="{container_sut_dir}/{test_root}"
+SOURCE_PATH="{container_sut_dir}/{source_root}"
 
-# {"No " if not has_deps else ""}Dependencies
-{f'DEPS_CLASS_PATH="{deps_cp}"' if has_deps else ""}
+CLASS_PATH="{container_sut_dir}/{compiled_root}{f':{runtime_deps_cp}' if has_runtime_deps else ""}"
+TEST_CLASS_PATH="{container_sut_dir}/{compiled_root}:{container_sut_dir}/{test_root}{f':{test_deps_cp}' if has_test_deps else ""}"
 
 # {"No " if junit_options is None else ""}Junit options
 {f'JUNIT_OPTIONS="{junit_options}"' if junit_options is not None else ""}
@@ -110,7 +142,7 @@ jdart_cfg = f"""# ============================================================
 # AUTO-GENERATED — DO NOT EDIT
 # ============================================================
 # Compiled classes
-classpath=/sut/{compiled_root}
+classpath={container_sut_dir}/{compiled_root}
 
 # Class under analysis
 target={cls}
@@ -119,7 +151,7 @@ concolic.method.{method}={jdart_method}
 concolic.method={method}
 
 # Generated tests output
-jdart.tests.dir=/sut/{jdart_tests_dir_out}
+jdart.tests.dir={container_sut_dir}/{jdart_tests_dir_out}
 """
 
 jdart_out = ROOT / "jdart/configs/sut_gen.jpf"

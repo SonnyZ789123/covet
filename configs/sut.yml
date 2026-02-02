@@ -6,10 +6,15 @@ sut:
   compiled_root: target/classes
   test_root: target/test-classes
   source_root: src/main/java
-  # Optional deps_class_path: specify the classpath for the dependencies (colon-separated, test scope)
-  # The paths should be absolute and be in the DEPS_DIR defined in the .env
-  # if not specified, it will be auto-detected from the SUT_DIR, and should be in the DEPS_DIR defined in the .env
-  # deps_class_path:
+  # Optional test_deps_classpath: specify the classpath for the dependencies (colon-separated, test scope)
+  # The paths should be absolute and be in the DEPS_DIR if defined in the .env
+  # if not specified, it will be auto-detected from the SUT_DIR, and should be in the DEPS_DIR if defined in the .env
+  # test_deps_classpath:
+
+  # Optional runtime_deps_classpath: specify the classpath for the dependencies (colon-separated, runtime scope)
+  # The paths should be absolute and be in the DEPS_DIR if defined in the .env
+  # if not specified, it will be auto-detected from the SUT_DIR, and should be in the DEPS_DIR if defined in the .env
+  # runtime_deps_classpath:
 
   # Optional junit_options: specify junit run options (e.g., --select-class com.example.MyTestClass)
   # if not specified, --scan-classpath will be used

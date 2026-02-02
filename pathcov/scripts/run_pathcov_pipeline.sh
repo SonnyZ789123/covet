@@ -23,18 +23,17 @@ readonly SUT_CONFIG_FILE="${1:-$CONFIGS_DIR/sut.config}"
 # shellcheck source=/dev/null
 source "$SUT_CONFIG_FILE"
 
+: "${COMPILED_ROOT:?COMPILED_ROOT not set}"
+: "${COMPILED_TEST_ROOT:?COMPILED_TEST_ROOT not set}"
+: "${SOURCE_PATH:?SOURCE_PATH not set}"
 : "${CLASS_PATH:?CLASS_PATH not set}"
 : "${TEST_CLASS_PATH:?TEST_CLASS_PATH not set}"
-: "${SOURCE_PATH:?SOURCE_PATH not set}"
 : "${TARGET_CLASS:?TARGET_CLASS not set}"
 : "${FULLY_QUALIFIED_METHOD_SIGNATURE:?FULLY_QUALIFIED_METHOD_SIGNATURE not set}"
 
 # ============================================================
 # FIXED CONFIG
 # ============================================================
-readonly CLASS_PATH="${SUT_DIR}/${CLASS_PATH}"
-readonly TEST_CLASS_PATH="${SUT_DIR}/${TEST_CLASS_PATH}"
-
 # Shared data volume with the JDart container
 readonly DATA_DIR="${2:-$DATA_DIR}"
 
@@ -88,7 +87,7 @@ run_junit_with_agent() {
 
 java \
   -javaagent:"$AGENT_JAR=$INTELLIJ_COVERAGE_AGENT_CONFIG_PATH" \
-  -cp "$JUNIT_CONSOLE_JAR:$CLASS_PATH:$TEST_CLASS_PATH${DEPS_CLASS_PATH:+:$DEPS_CLASS_PATH}" \
+  -cp "$JUNIT_CONSOLE_JAR:$TEST_CLASS_PATH" \
   org.junit.platform.console.ConsoleLauncher \
   $JUNIT_OPTIONS
 
@@ -111,7 +110,7 @@ generate_coverage_data() {
 
   "$SCRIPTS_DIR/make_intellij_coverage_exporter_config.sh" \
     "$INTELLIJ_COVERAGE_REPORT_PATH" \
-    "$CLASS_PATH" \
+    "$COMPILED_ROOT" \
     "$SOURCE_PATH" \
     "$TARGET_CLASS" \
     "$COVERAGE_EXPORT_OUTPUT_PATH" \
