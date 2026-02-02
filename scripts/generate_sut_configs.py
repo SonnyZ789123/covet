@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 import yaml
 
-from detect_deps_classpath import detect_build_tool, detect_deps_classpath, deps_dir_from_build_tool
+from detect_deps_classpath import detect_build_tool, detect_test_deps_classpath, deps_dir_from_build_tool
 from rewrite_classpath import rewrite_classpath
 from generate_deps_compose import generate_deps_compose
 
@@ -63,7 +63,7 @@ if not deps_dir and (deps_class_path is None or deps_class_path != ""):
 deps_cp = None
 # Auto-detect classpath
 if deps_class_path is None:
-    raw_cp = detect_deps_classpath(sut_dir) if deps_class_path is None else deps_class_path
+    raw_cp = detect_test_deps_classpath(sut_dir) if deps_class_path is None else deps_class_path
     deps_cp = rewrite_classpath(deps_dir, container_deps_dir, raw_cp)
 # deps_class_path override, and it's not empty
 elif deps_class_path != "":

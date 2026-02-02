@@ -61,25 +61,39 @@ def deps_dir_from_build_tool(build_tool: str, project_dir: Path) -> Path:
     raise RuntimeError(f"Build tool '{build_tool}' not supported for deps dir detection")
 
 
-# ---------- MAVEN (compile + runtime + test) ----------
-def maven_classpath(project_dir: Path):
-    tmp_file = project_dir / ".classpath.tmp"
+# ============================================================
+# MAVEN
+# ============================================================
+
+def maven_classpath_with_scope(project_dir: Path, scope: str):
+    tmp_file = project_dir / f".classpath.{scope}.tmp"
     cmd = [
         "mvn", "-q",
         "-Dmdep.outputAbsoluteArtifactFilename=true",
         "-Dmdep.pathSeparator=:",
         f"-Dmdep.outputFile={tmp_file}",
-        "-DincludeScope=test",  # <-- THIS pulls everything
+        f"-DincludeScope={scope}",
         "dependency:build-classpath"
     ]
     run(cmd, project_dir)
-    cp = tmp_file.read_text().strip()
+    cp = tmp_file.read_text().strip() if tmp_file.exists() else ""
     tmp_file.unlink(missing_ok=True)
     return cp
 
 
-# ---------- GRADLE (main + test runtime) ----------
-def gradle_classpath(project_dir: Path):
+def maven_test_deps_classpath(project_dir: Path):
+    return maven_classpath_with_scope(project_dir, "test")
+
+
+def maven_runtime_deps_classpath(project_dir: Path):
+    return maven_classpath_with_scope(project_dir, "runtime")
+
+
+# ============================================================
+# GRADLE
+# ============================================================
+
+def gradle_test_deps_classpath(project_dir: Path):
     init_script = project_dir / ".print_classpath.gradle"
     init_script.write_text("""
 allprojects {
@@ -107,40 +121,102 @@ allprojects {
     return cp
 
 
-# ---------- IVY (resolve everything, grab jars) ----------
-def ivy_classpath(project_dir: Path):
-    cmd = ["ant", "-q", "resolve", "retrieve"]
+def gradle_runtime_deps_classpath(project_dir: Path):
+    init_script = project_dir / ".print_runtime_classpath.gradle"
+    init_script.write_text("""
+allprojects {
+    afterEvaluate { project ->
+        if (project.plugins.hasPlugin('java')) {
+            project.tasks.register("printRuntimeDepsClasspath") {
+                doLast {
+                    def runtimeCp = project.sourceSets.main.runtimeClasspath.files
+                        .collect { it.absolutePath }
+                        .unique()
+                        .join(":")
+                    println runtimeCp
+                }
+            }
+        }
+    }
+}
+""")
+
+    runtime_cp = run(
+        ["gradle", "-q", "--init-script", str(init_script), "printRuntimeDepsClasspath"],
+        project_dir
+    )
+
+    init_script.unlink(missing_ok=True)
+    return runtime_cp.strip()
+
+
+# ============================================================
+# IVY / ANT
+# ============================================================
+
+def ivy_resolve(project_dir: Path, conf: str):
+    cmd = ["ant", "-q", f"-Divy.conf={conf}", "resolve", "retrieve"]
     run(cmd, project_dir)
 
     jars = list(project_dir.rglob("*.jar"))
     return ":".join(str(j.resolve()) for j in jars)
 
 
-def detect_deps_classpath(project_dir_str: str):
-    project_dir = Path(project_dir_str).resolve()
-    if not project_dir.exists():
-        raise RuntimeError("Project directory does not exist")
+def ivy_test_deps_classpath(project_dir: Path):
+    return ivy_resolve(project_dir, "test")
 
+
+def ivy_runtime_deps_classpath(project_dir: Path):
+    return ivy_resolve(project_dir, "runtime")
+
+
+# ============================================================
+# PUBLIC API
+# ============================================================
+
+def detect_test_deps_classpath(project_dir_str: str):
+    project_dir = Path(project_dir_str).resolve()
     tool = detect_build_tool(project_dir)
-    if not tool:
-        raise RuntimeError("Could not detect build tool (Maven, Gradle, Ivy/Ant)")
 
     if tool == "maven":
-        cp = maven_classpath(project_dir)
+        return maven_test_deps_classpath(project_dir)
     elif tool == "gradle":
-        cp = gradle_classpath(project_dir)
-    elif tool == "ivy":
-        cp = ivy_classpath(project_dir)
+        return gradle_test_deps_classpath(project_dir)
+    elif tool in ("ivy", "ant"):
+        return ivy_test_deps_classpath(project_dir)
     else:
-        raise RuntimeError(f"Build tool '{tool}' detected but not supported for dependency extraction")
+        raise RuntimeError("Unsupported build tool")
 
-    return cp
 
+def detect_runtime_deps_classpath(project_dir_str: str):
+    project_dir = Path(project_dir_str).resolve()
+    tool = detect_build_tool(project_dir)
+
+    if tool == "maven":
+        return maven_runtime_deps_classpath(project_dir)
+    elif tool == "gradle":
+        return gradle_runtime_deps_classpath(project_dir)
+    elif tool in ("ivy", "ant"):
+        return ivy_runtime_deps_classpath(project_dir)
+    else:
+        raise RuntimeError("Unsupported build tool")
+
+
+# ============================================================
+# CLI
+# ============================================================
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: detect_classpath.py <project_dir>")
+    if len(sys.argv) < 2:
+        print("Usage:")
+        print("  detect_classpath.py <project_dir>")
         sys.exit(1)
 
-    cp = detect_deps_classpath(sys.argv[1])
-    print(cp)
+    project_dir = sys.argv[1]
+
+    runtime_cp = detect_runtime_deps_classpath(project_dir)
+    test_cp = detect_test_deps_classpath(project_dir)
+    print("=== RUNTIME DEPENDENCIES ===")
+    print(runtime_cp)
+    print("\n=== TEST DEPENDENCIES ===")
+    print(test_cp)
