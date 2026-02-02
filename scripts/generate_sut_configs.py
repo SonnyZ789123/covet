@@ -31,8 +31,10 @@ source_root = sut_cfg["sut"]["source_root"]
 deps_class_path = None 
 # Differentiate between not set and empty
 if "deps_class_path" in sut_cfg["sut"]:
-    print(f"Using deps_class_path from sut.yml")
     deps_class_path = "" if not sut_cfg["sut"]["deps_class_path"] else sut_cfg["sut"]["deps_class_path"]
+
+junit_options = sut_cfg["sut"].get("junit_options", None)
+
 jdart_tests_dir_out = sut_cfg["test_generation"]["generated_tests_dir_out"]
 
 # -------------------------------
@@ -86,6 +88,9 @@ SOURCE_PATH="{source_root}"
 
 # {"No " if not has_deps else ""}Dependencies
 {f'DEPS_CLASS_PATH="{deps_cp}"' if has_deps else ""}
+
+# {"No " if junit_options is None else ""}Junit options
+{f'JUNIT_OPTIONS="{junit_options}"' if junit_options is not None else ""}
 
 TARGET_CLASS="{cls}"
 FULLY_QUALIFIED_METHOD_SIGNATURE="{pathcov_sig}"

@@ -45,6 +45,7 @@ readonly PATHCOV_DIR="$PATHCOV_PROJECT_DIR/pathcov"
 readonly AGENT_JAR="${INTELLIJ_COVERAGE_AGENT_JAR:?INTELLIJ_COVERAGE_AGENT_JAR is not set}"  # This variable is injected at container runtime via ENV
 
 readonly JUNIT_CONSOLE_JAR="${JUNIT_CONSOLE_JAR:?JUNIT_CONSOLE_JAR is not set}"  # This variable is injected at container runtime via ENV
+readonly JUNIT_OPTIONS="${JUNIT_OPTIONS:-"--scan-classpath"}"  # This variable is injected at container runtime via ENV
 
 # Outputs
 readonly BLOCK_MAP_PATH="$DATA_DIR/blockmaps/icfg_block_map.json"
@@ -89,7 +90,7 @@ java \
   -javaagent:"$AGENT_JAR=$INTELLIJ_COVERAGE_AGENT_CONFIG_PATH" \
   -cp "$JUNIT_CONSOLE_JAR:$CLASS_PATH:$TEST_CLASS_PATH${DEPS_CLASS_PATH:+:$DEPS_CLASS_PATH}" \
   org.junit.platform.console.ConsoleLauncher \
-  --scan-classpath
+  $JUNIT_OPTIONS
 
   local exit_code=$?
   set -e

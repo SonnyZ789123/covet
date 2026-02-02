@@ -11,6 +11,10 @@ sut:
   # if not specified, it will be auto-detected from the SUT_DIR, and should be in the DEPS_DIR defined in the .env
   # deps_class_path:
 
+  # Optional junit_options: specify junit run options (e.g., --select-class com.example.MyTestClass)
+  # if not specified, --scan-classpath will be used
+  junit_options: --select-class com.thealgorithms.maths.LongDivisionTest
+
 test_generation:
   generated_tests_dir_out: data/generated-tests
 
