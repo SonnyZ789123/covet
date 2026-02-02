@@ -100,6 +100,14 @@ elif test_deps_classpath != "":
 has_test_deps = test_deps_cp is not None
 
 # -------------------------------
+# Set the compiled (test) root to absolute paths in container
+# -------------------------------
+
+compiled_root = f"{sut_dir}/{compiled_root}"
+test_root = f"{sut_dir}/{test_root}"
+source_root = f"{sut_dir}/{source_root}"
+
+# -------------------------------
 # Generate Pathcov config
 # -------------------------------
 container_sut_dir = os.getenv("CONTAINER_SUT_DIR")
@@ -114,12 +122,12 @@ pathcov_cfg = f"""# ============================================================
 # Paths should be relative to the root given in the .env file
 
 # Compiled classes
-COMPILED_ROOT="{container_sut_dir}/{compiled_root}"
-COMPILED_TEST_ROOT="{container_sut_dir}/{test_root}"
-SOURCE_PATH="{container_sut_dir}/{source_root}"
+COMPILED_ROOT="{compiled_root}"
+COMPILED_TEST_ROOT="{test_root}"
+SOURCE_PATH="{source_root}"
 
-CLASS_PATH="{container_sut_dir}/{compiled_root}{f':{runtime_deps_cp}' if has_runtime_deps else ""}"
-TEST_CLASS_PATH="{container_sut_dir}/{compiled_root}:{container_sut_dir}/{test_root}{f':{test_deps_cp}' if has_test_deps else ""}"
+CLASS_PATH="{compiled_root}{f':{runtime_deps_cp}' if has_runtime_deps else ""}"
+TEST_CLASS_PATH="{compiled_root}:{test_root}{f':{test_deps_cp}' if has_test_deps else ""}"
 
 # {"No " if junit_options is None else ""}Junit options
 {f'JUNIT_OPTIONS="{junit_options}"' if junit_options is not None else ""}
@@ -130,7 +138,7 @@ PROJECT_PREFIXES="{project_prefixes}"
 """
 
 pathcov_out = ROOT / "pathcov/configs/sut.config"
-pathcov_out.parent.mkdir(parents=True, exist_ok=True)   # ← FIX
+pathcov_out.parent.mkdir(parents=True, exist_ok=True)
 pathcov_out.write_text(pathcov_cfg)
 
 # -------------------------------
@@ -142,7 +150,7 @@ jdart_cfg = f"""# ============================================================
 # AUTO-GENERATED — DO NOT EDIT
 # ============================================================
 # Compiled classes
-classpath={container_sut_dir}/{compiled_root}
+classpath={compiled_root}
 
 # Class under analysis
 target={cls}
@@ -155,7 +163,7 @@ jdart.tests.dir={container_sut_dir}/{jdart_tests_dir_out}
 """
 
 jdart_out = ROOT / "jdart/configs/sut_gen.jpf"
-jdart_out.parent.mkdir(parents=True, exist_ok=True)      # ← FIX
+jdart_out.parent.mkdir(parents=True, exist_ok=True)
 jdart_out.write_text(jdart_cfg)
 
 print("[OK] Generated:")
