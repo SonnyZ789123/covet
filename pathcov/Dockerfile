@@ -33,12 +33,12 @@ RUN mvn -B clean install -DskipTests
 # Install intellij-coverage-model
 ###############################################################################
 WORKDIR ${PATHCOV_PROJECT_DIR}
-RUN git clone --branch v2.0.0 https://github.com/SonnyZ789123/intellij-coverage-model.git
+RUN git clone --branch v2.1.0 https://github.com/SonnyZ789123/intellij-coverage-model.git
 WORKDIR ${PATHCOV_PROJECT_DIR}/intellij-coverage-model
-RUN git checkout v2.0.0
+RUN git checkout v2.1.0
 RUN mvn -B clean install -DskipTests
 
-ENV COVERAGE_MODEL_JAR=${PATHCOV_PROJECT_DIR}/intellij-coverage-model/target/intellij-coverage-model-2.0.0.jar
+ENV COVERAGE_MODEL_JAR=${PATHCOV_PROJECT_DIR}/intellij-coverage-model/target/intellij-coverage-model-2.1.0.jar
 
 ###############################################################################
 # Install pathcov
