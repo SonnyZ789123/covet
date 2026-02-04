@@ -44,12 +44,12 @@ ENV COVERAGE_MODEL_JAR=${PATHCOV_PROJECT_DIR}/intellij-coverage-model/target/int
 # Install pathcov
 ###############################################################################
 WORKDIR ${PATHCOV_PROJECT_DIR}
-RUN git clone --branch v2.0.0 https://github.com/SonnyZ789123/pathcov.git
+RUN git clone --branch v2.1.0 https://github.com/SonnyZ789123/pathcov.git
 WORKDIR ${PATHCOV_PROJECT_DIR}/pathcov
-RUN git checkout v2.0.0
+RUN git checkout v2.1.0
 RUN mvn -B clean install -DskipTests
 
-ENV PATHCOV_JAR=${PATHCOV_PROJECT_DIR}/pathcov/target/pathcov-2.0.0.jar
+ENV PATHCOV_JAR=${PATHCOV_PROJECT_DIR}/pathcov/target/pathcov-2.1.0.jar
 
 ###############################################################################
 # Install IntelliJ Coverage Agent
