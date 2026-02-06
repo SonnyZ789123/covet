@@ -68,10 +68,10 @@ warn() {
 run_junit_with_agent() {
   log "⚙️ Running test suite with coverage agent"
 
-  # "$SCRIPTS_DIR/common/make_coverage_agent_args.sh" \
-  #   "$INTELLIJ_COVERAGE_REPORT_PATH" \
-  #   "$CG_CLASSES_OUTPUT_PATH" \
-  #   "$INTELLIJ_COVERAGE_AGENT_CONFIG_PATH"
+  "$SCRIPTS_DIR/common/make_coverage_agent_args.sh" \
+    "$INTELLIJ_COVERAGE_REPORT_PATH" \
+    "$CG_CLASSES_OUTPUT_PATH" \
+    "$INTELLIJ_COVERAGE_AGENT_CONFIG_PATH"
 
   set +e
 
