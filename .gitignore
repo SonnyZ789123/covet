@@ -5,6 +5,9 @@ scripts/__pycache__/
 # Generated data directory for development environment
 development/data
 
+# Ouput directory
+output/
+
 # Ignore generated config files
 jdart/configs/sut_gen.jpf
 pathcov/configs
