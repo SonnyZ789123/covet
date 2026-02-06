@@ -44,7 +44,7 @@ ENV COVERAGE_MODEL_JAR=${PATHCOV_PROJECT_DIR}/intellij-coverage-model/target/int
 ###############################################################################
 # Install pathcov
 ###############################################################################
-ENV PATHCOV_VERSION=2.3.0
+# PATHCOV_VERSION is inherited from the base image, but we need to build it from source for development
 WORKDIR ${PATHCOV_PROJECT_DIR}
 RUN git clone --branch v${PATHCOV_VERSION} https://github.com/SonnyZ789123/pathcov.git
 WORKDIR ${PATHCOV_PROJECT_DIR}/pathcov
