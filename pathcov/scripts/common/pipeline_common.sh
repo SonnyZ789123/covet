@@ -2,14 +2,6 @@
 set -Eeuo pipefail
 
 # ============================================================
-# CHECK ENV VARIABLES FOR MOUNTED DIRECTORIES
-# ============================================================
-: "${SUT_DIR:?SUT_DIR not set}"
-: "${DATA_DIR:?DATA_DIR not set}"
-: "${CONFIGS_DIR:?CONFIGS_DIR not set}"
-: "${SCRIPTS_DIR:?SCRIPTS_DIR not set}"
-
-# ============================================================
 # LOAD CONFIGURABLE SUT CONFIG
 # ============================================================
 
@@ -38,9 +30,6 @@ source "$SUT_CONFIG_FILE"
 readonly DATA_DIR="${2:-$DATA_DIR}"
 
 # Tools inside image
-readonly PATHCOV_PROJECT_DIR="${PATHCOV_PROJECT_DIR:?PATHCOV_PROJECT_DIR is not set}"  # This variable is injected at container runtime via ENV
-readonly PATHCOV_DIR="$PATHCOV_PROJECT_DIR/pathcov"
-
 readonly AGENT_JAR="${INTELLIJ_COVERAGE_AGENT_JAR:?INTELLIJ_COVERAGE_AGENT_JAR is not set}"  # This variable is injected at container runtime via ENV
 
 readonly JUNIT_CONSOLE_JAR="${JUNIT_CONSOLE_JAR:?JUNIT_CONSOLE_JAR is not set}"  # This variable is injected at container runtime via ENV
@@ -72,13 +61,13 @@ warn() {
 }
 
 # ============================================================
-# STEPS
+# COMMON STEPS
 # ============================================================
 run_junit_with_agent() {
   log "⚙️ Running test suite with coverage agent"
 
   
-  "$SCRIPTS_DIR/make_coverage_agent_args.sh" \
+  "$SCRIPTS_DIR/common/make_coverage_agent_args.sh" \
     "$INTELLIJ_COVERAGE_REPORT_PATH" \
     "$TARGET_CLASS" \
     "$INTELLIJ_COVERAGE_AGENT_CONFIG_PATH"
@@ -103,61 +92,6 @@ java \
   log "✅ Running test suite completed"
 }
 
-generate_coverage_data() {
-  log "⚙️ Exporting coverage data to JSON format"
-
-  pushd "$PATHCOV_DIR" > /dev/null
-
-  "$SCRIPTS_DIR/make_intellij_coverage_exporter_config.sh" \
-    "$INTELLIJ_COVERAGE_REPORT_PATH" \
-    "$COMPILED_ROOT" \
-    "$SOURCE_PATH" \
-    "$TARGET_CLASS" \
-    "$COVERAGE_EXPORT_OUTPUT_PATH" \
-    "$EXPORTER_CONFIG_PATH"
-
-
-  mvn exec:java \
-    -Dexec.mainClass="com.kuleuven.coverage.intellij.export.CoverageExportMain" \
-    -Dexec.args="$EXPORTER_CONFIG_PATH"
-
-  popd > /dev/null
-}
-
-generate_block_map() {
-  log "⚙️ Generating block map for $FULLY_QUALIFIED_METHOD_SIGNATURE"
-
-  pushd "$PATHCOV_DIR" > /dev/null
-
-  mvn exec:java \
-    -Dexec.mainClass="com.kuleuven.icfg.GenerateBlockMap" \
-    -Dexec.args=" \
-      $CLASS_PATH \
-      \"$FULLY_QUALIFIED_METHOD_SIGNATURE\" \
-      $COVERAGE_EXPORT_OUTPUT_PATH \
-      $BLOCK_MAP_PATH \
-      $PROJECT_PREFIXES"
-
-  popd > /dev/null
-}
-
-generate_coverage_graph() {
-  log "⚙️ Generating coverage graph"
-
-  pushd "$PATHCOV_DIR" > /dev/null
-
-  mvn exec:java \
-    -Dexec.mainClass="com.kuleuven.icfg.coverage.GenerateCoverageGraph" \
-    -Dexec.args=" \
-      $CLASS_PATH \
-      \"$FULLY_QUALIFIED_METHOD_SIGNATURE\" \
-      $BLOCK_MAP_PATH \
-      $VISUALIZATION_DIR/$DOT_FILE_NAME \
-      $PROJECT_PREFIXES"
-
-  popd > /dev/null
-}
-
 generate_svg() {
   log "⚙️ Generating SVG visualization"
 
@@ -169,7 +103,7 @@ generate_svg() {
 # ============================================================
 # MAIN
 # ============================================================
-main() {
+main_common() {
   run_junit_with_agent
   generate_coverage_data
   generate_block_map
@@ -177,5 +111,3 @@ main() {
   generate_svg
   log "✅ Pipeline completed successfully"
 }
-
-main "$@"

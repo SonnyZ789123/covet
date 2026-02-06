@@ -1,0 +1,62 @@
+FROM sonnyz789123/pathcov-image:latest
+
+LABEL maintainer="yoranmertens0@gmail.com"
+
+###############################################################################
+# Install system dependencies
+###############################################################################
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        maven \
+        git \
+        ca-certificates \
+        bash && \
+    rm -rf /var/lib/apt/lists/*
+
+###############################################################################
+# Project directory
+###############################################################################
+ENV PATHCOV_PROJECT_DIR=/pathcov-project
+RUN mkdir -p ${PATHCOV_PROJECT_DIR}
+
+###############################################################################
+# Install SootUp
+###############################################################################
+ENV SOOTUP_VERSION=2.0.1
+WORKDIR ${PATHCOV_PROJECT_DIR}
+RUN git clone --branch v${SOOTUP_VERSION} https://github.com/SonnyZ789123/SootUp.git
+WORKDIR ${PATHCOV_PROJECT_DIR}/SootUp
+RUN git checkout v${SOOTUP_VERSION}
+RUN mvn -B clean install -DskipTests
+
+###############################################################################
+# Install intellij-coverage-model
+###############################################################################
+ENV INTELLIJ_COVERAGE_MODEL_VERSION=2.1.0
+WORKDIR ${PATHCOV_PROJECT_DIR}
+RUN git clone --branch v${INTELLIJ_COVERAGE_MODEL_VERSION} https://github.com/SonnyZ789123/intellij-coverage-model.git
+WORKDIR ${PATHCOV_PROJECT_DIR}/intellij-coverage-model
+RUN git checkout v${INTELLIJ_COVERAGE_MODEL_VERSION}
+RUN mvn -B clean install -DskipTests
+
+ENV COVERAGE_MODEL_JAR=${PATHCOV_PROJECT_DIR}/intellij-coverage-model/target/intellij-coverage-model-${INTELLIJ_COVERAGE_MODEL_VERSION}.jar
+
+###############################################################################
+# Install pathcov
+###############################################################################
+ENV PATHCOV_VERSION=2.3.0
+WORKDIR ${PATHCOV_PROJECT_DIR}
+RUN git clone --branch v${PATHCOV_VERSION} https://github.com/SonnyZ789123/pathcov.git
+WORKDIR ${PATHCOV_PROJECT_DIR}/pathcov
+RUN git checkout v${PATHCOV_VERSION}
+# Skip the shading to keep dependencies separate for development
+RUN mvn -B clean install -DskipTests -DskipShade 
+
+# Override the PATHCOV_JAR set in prod image which was the fat jar
+ENV PATHCOV_JAR=${PATHCOV_PROJECT_DIR}/pathcov/target/pathcov-${PATHCOV_VERSION}.jar
+
+###############################################################################
+# Default
+###############################################################################
+WORKDIR ${PATHCOV_PROJECT_DIR}
+CMD ["/bin/bash"]

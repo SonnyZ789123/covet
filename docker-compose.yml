@@ -1,6 +1,6 @@
 services:
   pathcov:
-    image: sonnyz789123/pathcov-image:2.2.0
+    image: sonnyz789123/pathcov-image:2.3.0
     environment:
       - ENV=prod
       - DATA_DIR=${CONTAINER_DATA_DIR}

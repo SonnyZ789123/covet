@@ -1,55 +1,27 @@
-FROM maven:3.9.9-eclipse-temurin-21
+FROM eclipse-temurin:17-jdk
 
 LABEL maintainer="yoranmertens0@gmail.com"
 
 ###############################################################################
-# Install system dependencies
+# Install runtime system dependencies only
 ###############################################################################
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        git \
-        graphviz \
         ca-certificates \
-        bash \
+        graphviz \
         curl && \
     rm -rf /var/lib/apt/lists/*
 
 ###############################################################################
-# Project directory
-###############################################################################
-ENV PATHCOV_PROJECT_DIR=/pathcov-project
-RUN mkdir -p ${PATHCOV_PROJECT_DIR}
-
-###############################################################################
-# Install SootUp
-###############################################################################
-WORKDIR ${PATHCOV_PROJECT_DIR}
-RUN git clone --branch v2.0.1 https://github.com/SonnyZ789123/SootUp.git
-WORKDIR ${PATHCOV_PROJECT_DIR}/SootUp
-RUN git checkout v2.0.1
-RUN mvn -B clean install -DskipTests
-
-###############################################################################
-# Install intellij-coverage-model
-###############################################################################
-WORKDIR ${PATHCOV_PROJECT_DIR}
-RUN git clone --branch v2.1.0 https://github.com/SonnyZ789123/intellij-coverage-model.git
-WORKDIR ${PATHCOV_PROJECT_DIR}/intellij-coverage-model
-RUN git checkout v2.1.0
-RUN mvn -B clean install -DskipTests
-
-ENV COVERAGE_MODEL_JAR=${PATHCOV_PROJECT_DIR}/intellij-coverage-model/target/intellij-coverage-model-2.1.0.jar
-
-###############################################################################
 # Install pathcov
 ###############################################################################
-WORKDIR ${PATHCOV_PROJECT_DIR}
-RUN git clone --branch v2.2.0 https://github.com/SonnyZ789123/pathcov.git
-WORKDIR ${PATHCOV_PROJECT_DIR}/pathcov
-RUN git checkout v2.2.0
-RUN mvn -B clean install -DskipTests
+ENV PATHCOV_VERSION=2.3.0
+ENV PATHCOV_JAR=/opt/pathcov/pathcov-${PATHCOV_VERSION}.jar
 
-ENV PATHCOV_JAR=${PATHCOV_PROJECT_DIR}/pathcov/target/pathcov-2.2.0.jar
+RUN mkdir -p /opt/pathcov && \
+    curl -fsSL \
+      https://github.com/SonnyZ789123/pathcov/releases/download/v${PATHCOV_VERSION}/pathcov-${PATHCOV_VERSION}.jar \
+      -o ${PATHCOV_JAR}
 
 ###############################################################################
 # Install IntelliJ Coverage Agent
@@ -76,5 +48,4 @@ RUN mkdir -p /opt/junit && \
 ###############################################################################
 # Default
 ###############################################################################
-WORKDIR ${PATHCOV_PROJECT_DIR}
 CMD ["/bin/bash"]
