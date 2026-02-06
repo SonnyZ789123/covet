@@ -150,7 +150,7 @@ jdart_cfg = f"""# ============================================================
 # AUTO-GENERATED — DO NOT EDIT
 # ============================================================
 # Compiled classes
-classpath={compiled_root}
+classpath={compiled_root}{f':{runtime_deps_cp}' if has_runtime_deps else ""}
 
 # Class under analysis
 target={cls}
