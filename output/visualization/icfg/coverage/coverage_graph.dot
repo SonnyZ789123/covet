@@ -1,0 +1,136 @@
+digraph G {
+	compound=true
+	labelloc=b
+	style=filled
+	color=gray90
+	node [shape=box,style=filled,color=white]
+	edge [fontsize=10,arrowsize=1.5,fontcolor=grey40]
+	fontsize=10
+
+//  lines [52: 53] 
+	subgraph cluster_1516500233 { 
+		label = "Block ID: 0\nHits: 7\nBranches: 1/2"
+		style = filled
+		color = khaki1
+		fontsize = 10
+		1661081225[label="n := @parameter0: int",shape=Mdiamond,color=grey50,fillcolor=white]
+		1470344997[label="if $stack2 == 0"]
+
+		1661081225 -> 1470344997
+	}
+	1470344997:s -> 1738674023:n[label="false"]
+	1470344997:s -> 1139700454:n[label="true"]
+
+//  lines [54: 55] 
+	subgraph cluster_1472682156 { 
+		label = "Block ID: 1\nHits: 0\n"
+		style = filled
+		color = lightcoral
+		fontsize = 10
+		1738674023[label="n = n &gt;&gt;&gt; 16"]
+		1321530272[label="log = 16"]
+
+		1738674023 -> 1321530272
+	}
+	1321530272:s -> 1139700454:n
+
+//  lines [57: 57] 
+	subgraph cluster_1691185247 { 
+		label = "Block ID: 2\nHits: 7\nBranches: 1/2"
+		style = filled
+		color = khaki1
+		fontsize = 10
+		1139700454[label="if n &lt; 256"]
+	}
+	1139700454:s -> 153245266:n[label="false"]
+	1139700454:s -> 1543148593:n[label="true"]
+
+//  lines [58: 59] 
+	subgraph cluster_1699679644 { 
+		label = "Block ID: 3\nHits: 0\n"
+		style = filled
+		color = lightcoral
+		fontsize = 10
+		153245266[label="n = n &gt;&gt;&gt; 8"]
+		2131670196[label="log = log + 8"]
+
+		153245266 -> 2131670196
+	}
+	2131670196:s -> 1543148593:n
+
+//  lines [61: 61] 
+	subgraph cluster_2114684409 { 
+		label = "Block ID: 4\nHits: 7\nBranches: 1/2"
+		style = filled
+		color = khaki1
+		fontsize = 10
+		1543148593[label="if n &lt; 16"]
+	}
+	1543148593:s -> 1664439369:n[label="false"]
+	1543148593:s -> 591391158:n[label="true"]
+
+//  lines [62: 63] 
+	subgraph cluster_154482552 { 
+		label = "Block ID: 5\nHits: 0\n"
+		style = filled
+		color = lightcoral
+		fontsize = 10
+		1664439369[label="n = n &gt;&gt;&gt; 4"]
+		210506412[label="log = log + 4"]
+
+		1664439369 -> 210506412
+	}
+	210506412:s -> 591391158:n
+
+//  lines [65: 65] 
+	subgraph cluster_24119573 { 
+		label = "Block ID: 6\nHits: 7\nBranches: 2/2"
+		style = filled
+		color = palegreen3
+		fontsize = 10
+		591391158[label="if n &lt; 4"]
+	}
+	591391158:s -> 568221876:n[label="false"]
+	591391158:s -> 361571968:n[label="true"]
+
+//  lines [66: 67] 
+	subgraph cluster_203849460 { 
+		label = "Block ID: 7\nHits: 7\n"
+		style = filled
+		color = palegreen3
+		fontsize = 10
+		568221876[label="n = n &gt;&gt;&gt; 2"]
+		371439501[label="log = log + 2"]
+
+		568221876 -> 371439501
+	}
+	371439501:s -> 361571968:n
+
+//  lines [69: 70] 
+	subgraph cluster_1546693040 { 
+		label = "Block ID: 8\nHits: 7\n"
+		style = filled
+		color = palegreen3
+		fontsize = 10
+		361571968[label="$stack3 = new java.lang.StringBuilder"]
+		156856360[label="staticinvoke &lt;org.jgrapht.util.Util: void print(java.lang.String)&gt;($stack8)"]
+		1740797075[label="return $stack10",shape=Mdiamond,color=grey50,fillcolor=white]
+
+		361571968 -> 156856360 -> 1740797075
+	}
+
+
+//  lines [5: 6] 
+	subgraph cluster_753853622 { 
+		label = "Block ID: 9\nHits: 7\n"
+		style = filled
+		color = palegreen3
+		fontsize = 10
+		61334373[label="s := @parameter0: java.lang.String",shape=Mdiamond,color=grey50,fillcolor=white]
+		242762528[label="return",shape=Mdiamond,color=grey50,fillcolor=white]
+
+		156856360 -> 61334373 -> 242762528
+	}
+
+
+}

@@ -8,6 +8,7 @@ set -Eeuo pipefail
 : "${DATA_DIR:?DATA_DIR not set}"
 : "${CONFIGS_DIR:?CONFIGS_DIR not set}"
 : "${SCRIPTS_DIR:?SCRIPTS_DIR not set}"
+: "${OUTPUT_DIR:?OUTPUT_DIR not set}"
 
 
 ENV="${ENV:-prod}"

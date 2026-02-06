@@ -8,11 +8,13 @@ services:
       - SCRIPTS_DIR=${CONTAINER_SCRIPTS_DIR}
       - SUT_DIR=${CONTAINER_SUT_DIR}
       - DEPS_DIR=${CONTAINER_DEPS_DIR}
+      - OUTPUT_DIR=${CONTAINER_OUTPUT_DIR}
     container_name: pathcov
     volumes:
       - pipeline-data:${CONTAINER_DATA_DIR}
       - ./pathcov/configs:${CONTAINER_CONFIGS_DIR}:ro
       - ./pathcov/scripts:${CONTAINER_SCRIPTS_DIR}:ro
+      - ./output:${CONTAINER_OUTPUT_DIR}
     working_dir: /pathcov-project
     stdin_open: true
     tty: true
@@ -27,10 +29,12 @@ services:
       - SCRIPTS_DIR=${CONTAINER_SCRIPTS_DIR}
       - SUT_DIR=${CONTAINER_SUT_DIR}
       - DEPS_DIR=${CONTAINER_DEPS_DIR}
+      - OUTPUT_DIR=${CONTAINER_OUTPUT_DIR}
     container_name: jdart
     volumes:
       - pipeline-data:${CONTAINER_DATA_DIR}
       - ./jdart/configs:${CONTAINER_CONFIGS_DIR}:ro
+      - ./output:${CONTAINER_OUTPUT_DIR}
     working_dir: /jdart-project
     stdin_open: true
     tty: true

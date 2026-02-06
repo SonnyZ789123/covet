@@ -46,7 +46,7 @@ readonly INTELLIJ_COVERAGE_REPORT_PATH="$DATA_DIR/intellij-coverage/intellij_cov
 readonly EXPORTER_CONFIG_PATH="$DATA_DIR/intellij-coverage/intellij_coverage_exporter_config.json"
 readonly COVERAGE_EXPORT_OUTPUT_PATH="$DATA_DIR/coverage/coverage_data.json"
 
-readonly VISUALIZATION_DIR="$DATA_DIR/visualization/icfg/coverage"
+readonly VISUALIZATION_DIR="$OUTPUT_DIR/visualization/icfg/coverage"
 
 readonly DOT_FILE_NAME="coverage_graph.dot"
 readonly SVG_FILE_NAME="coverage_graph.svg"
