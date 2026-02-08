@@ -42,10 +42,12 @@ if "runtime_deps_classpath" in sut_cfg["sut"]:
 
 junit_options = sut_cfg["sut"].get("junit_options", None)
 
-jdart_tests_dir_out = sut_cfg["test_generation"]["generated_tests_dir_out"]
+jdart_tests_dir_out = None
+if sut_cfg["test_generation"] is not None and "generated_tests_dir_out" in sut_cfg["test_generation"]:
+    jdart_tests_dir_out = sut_cfg["test_generation"]["generated_tests_dir_out"]
 
 # -------------------------------
-# Get the deps classpath
+# Load environment variables
 # -------------------------------
 load_dotenv(dotenv_path=Path("sut.env"))
 
@@ -61,6 +63,13 @@ container_deps_dir = os.getenv("CONTAINER_DEPS_DIR")
 if not container_deps_dir:
     raise RuntimeError("CONTAINER_DEPS_DIR not set in container.env")
 
+container_output_dir = os.getenv("CONTAINER_OUTPUT_DIR")
+if not container_output_dir:
+    raise RuntimeError("CONTAINER_OUTPUT_DIR not set in container.env")
+
+# -------------------------------
+# Get the deps classpath
+# -------------------------------
 has_potentially_runtime_deps = runtime_deps_classpath is None or runtime_deps_classpath != ""
 has_potentially_test_deps = test_deps_classpath is None or test_deps_classpath != ""
 
@@ -160,7 +169,7 @@ concolic.method.{method}={jdart_method}
 concolic.method={method}
 
 # Generated tests output
-jdart.tests.dir={container_sut_dir}/{jdart_tests_dir_out}
+jdart.tests.dir={f"{container_sut_dir}/{jdart_tests_dir_out}" if jdart_tests_dir_out else f"{container_output_dir}/generated-tests"}
 """
 
 jdart_out = ROOT / "jdart/configs/sut_gen.jpf"

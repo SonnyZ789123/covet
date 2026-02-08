@@ -21,7 +21,9 @@ sut:
   junit_options: --select-class com.thealgorithms.maths.LongDivisionTest
 
 test_generation:
-  generated_tests_dir_out: data/generated-tests
+  # Optional generated_tests_dir_out: specify the output directory for generated tests, relative to the SUT_DIR
+  # if not specified, it will default to "generated-tests" in the OUTPUT_dir
+  # generated_tests_dir_out: 
 
 target:
   class: com.thealgorithms.maths.LongDivision
