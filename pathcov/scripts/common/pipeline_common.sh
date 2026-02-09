@@ -79,7 +79,8 @@ java \
   -javaagent:"$AGENT_JAR=$INTELLIJ_COVERAGE_AGENT_CONFIG_PATH" \
   -cp "$JUNIT_CONSOLE_JAR:$TEST_CLASS_PATH" \
   org.junit.platform.console.ConsoleLauncher \
-  $JUNIT_OPTIONS
+  $JUNIT_OPTIONS \
+  > /dev/null 2>&1
 
   local exit_code=$?
   set -e
@@ -98,7 +99,8 @@ generate_svg() {
 
   dot -Tsvg \
     "$VISUALIZATION_DIR/$DOT_FILE_NAME" \
-    -o "$VISUALIZATION_DIR/$SVG_FILE_NAME"
+    -o "$VISUALIZATION_DIR/$SVG_FILE_NAME" \
+    > /dev/null 2>&1
 }
 
 # ============================================================
