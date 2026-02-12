@@ -15,7 +15,7 @@ RUN apt-get update && \
 ###############################################################################
 # Install pathcov
 ###############################################################################
-ENV PATHCOV_VERSION=2.5.0
+ENV PATHCOV_VERSION=2.5.1
 ENV PATHCOV_JAR=/opt/pathcov/pathcov-${PATHCOV_VERSION}.jar
 
 RUN mkdir -p /opt/pathcov && \
