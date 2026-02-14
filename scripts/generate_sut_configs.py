@@ -24,7 +24,10 @@ params = sut_cfg["target"]["parameters"]
 param_types = ",".join(p["type"] for p in params)
 param_named = ",".join(f'{p["name"]}:{p["type"]}' for p in params)
 
-project_prefixes = ",".join(sut_cfg["analysis"]["project_prefixes"])
+if "analysis" not in sut_cfg or "project_prefixes" not in sut_cfg["analysis"]:
+    project_prefixes = ""
+else:
+    project_prefixes = ",".join(sut_cfg["analysis"]["project_prefixes"])
 
 compiled_root = sut_cfg["sut"]["compiled_root"]
 test_root = sut_cfg["sut"]["test_root"]
