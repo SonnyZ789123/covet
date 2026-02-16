@@ -97,7 +97,7 @@ RUN mkdir -p /root/.jconstraints/extensions && \
 # Install JDart
 ###############################################################################
 WORKDIR ${JDART_DIR}
-ENV JDART_VERSION=2.3.0
+ENV JDART_VERSION=2.3.1
 RUN git clone --branch v${JDART_VERSION} https://github.com/SonnyZ789123/jdart.git
 WORKDIR ${JDART_DIR}/jdart
 RUN git checkout v${JDART_VERSION}
