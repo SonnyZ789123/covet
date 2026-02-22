@@ -13,17 +13,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 ###############################################################################
-# Install pathcov
-###############################################################################
-ENV PATHCOV_VERSION=2.5.3
-ENV PATHCOV_JAR=/opt/pathcov/pathcov-${PATHCOV_VERSION}.jar
-
-RUN mkdir -p /opt/pathcov && \
-    curl -fsSL \
-      https://github.com/SonnyZ789123/pathcov/releases/download/v${PATHCOV_VERSION}/pathcov-${PATHCOV_VERSION}.jar \
-      -o ${PATHCOV_JAR}
-
-###############################################################################
 # Install IntelliJ Coverage Agent
 ###############################################################################
 ENV INTELLIJ_COVERAGE_VERSION=1.0.771
@@ -44,6 +33,17 @@ RUN mkdir -p /opt/junit && \
     curl -fsSL \
       https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${JUNIT_VERSION}/junit-platform-console-standalone-${JUNIT_VERSION}.jar \
       -o ${JUNIT_CONSOLE_JAR}
+
+###############################################################################
+# Install pathcov
+###############################################################################
+ENV PATHCOV_VERSION=2.5.3
+ENV PATHCOV_JAR=/opt/pathcov/pathcov-${PATHCOV_VERSION}.jar
+
+RUN mkdir -p /opt/pathcov && \
+    curl -fsSL \
+      https://github.com/SonnyZ789123/pathcov/releases/download/v${PATHCOV_VERSION}/pathcov-${PATHCOV_VERSION}.jar \
+      -o ${PATHCOV_JAR}
 
 ###############################################################################
 # Default
