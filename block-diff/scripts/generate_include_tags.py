@@ -8,6 +8,10 @@ def build_include_tag_string(data):
     tags.extend(data.get("addedBlockHashes", []))
     tags.extend(data.get("removedBlockHashes", []))
 
+    # No changed blocks => no tags => caller should skip tests
+    if not tags:
+        return ""
+
     # Emit: --include-tag TAG1 --include-tag TAG2 ...
     return " ".join(arg for tag in tags for arg in ("--include-tag", tag))
 
