@@ -1,5 +1,7 @@
 services:
   pathcov:
+    image: pathcov-image-dev
+
     environment:
       - ENV=dev
 
