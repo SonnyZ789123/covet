@@ -1,6 +1,6 @@
 # Claude Context and Guidelines
 
-> First take a look at `/Users/yoran.mertens/dev/master-thesis/claude-context`. This contains the context about the whole project (CONTEXT.md) and you can **ignore** how to work (HOW_TO_WORK.md).
+> First take a look at `/Users/yoran.mertens/dev/master-thesis/.claude`. This contains the context about the whole project (CONTEXT.md) and you can **ignore** how to work (HOW_TO_WORK.md).
 
 ## Project structure
 
