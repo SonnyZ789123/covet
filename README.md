@@ -165,6 +165,36 @@ jdart.exploration=gov.nasa.jpf.jdart.exploration.DFSStrategy
 jdart.exploration=gov.nasa.jpf.jdart.exploration.BFSStrategy
 ```
 
+Stop exploration once a target branch coverage is reached:
+
+```properties
+# Stop when runtime branch coverage (initial test suite + JDart discoveries)
+# reaches 80%. Requires a coverage tracker -- automatic with the coverage
+# heuristic, or via jdart.coverage.block_map_path for DFS/BFS (see below).
+jdart.termination=gov.nasa.jpf.jdart.termination.BranchCoverageTermination,80
+```
+
+Enable coverage telemetry and IGNORE filtering for any exploration strategy:
+
+```properties
+# Path to the block map JSON produced by the pathcov stage. Required for
+# DFS/BFS to get coverage telemetry, BranchCoverageTermination, and
+# IGNORE filtering. The coverage heuristic loads this automatically from
+# coverage_heuristic.config -- no need to set it there.
+jdart.coverage.block_map_path=/data/blockmaps/icfg_block_map.json
+
+# Mark paths whose branches are all already covered as IGNORE. Off by
+# default for DFS/BFS (every path is kept for fair strategy comparison).
+jdart.coverage.ignore_covered_paths=true
+```
+
+When a coverage tracker is available, JDart emits an `elapsed=Xms branch_coverage=Y%`
+line on the `jdart.evaluation` logger every time branch coverage changes:
+
+```properties
+log.info=jdart.evaluation,jdart
+```
+
 During execution, this file is **combined** with the auto-generated JDart configuration (`sut_gen.jpf`).
 
 Full `sut.jpf` configuration example:
@@ -190,8 +220,15 @@ jdart.configs.foo.max_alt_depth=1
 # switch to a DFS exploration strategy
 jdart.exploration=gov.nasa.jpf.jdart.exploration.DFSStrategy
 
+# enable coverage telemetry / termination / IGNORE for DFS or BFS
+jdart.coverage.block_map_path=/data/blockmaps/icfg_block_map.json
+jdart.coverage.ignore_covered_paths=true
+
 # Stop the concolic execution after 5 seconds
 jdart.termination=gov.nasa.jpf.jdart.termination.TimedTermination,0,0,5
+
+# Stop once runtime branch coverage reaches 80%
+jdart.termination=gov.nasa.jpf.jdart.termination.BranchCoverageTermination,80
 
 # Stop the constraint solver (invoked to find a new path) after 1 second
 z3.timeout=1000
