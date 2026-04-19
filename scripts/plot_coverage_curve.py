@@ -108,7 +108,7 @@ def load_curve(tsv_path: Path, label: str | None, end_time_ms: int | None) -> Cu
 # matplotlib's default cycle.
 DEFAULT_COLOURS = {
     "dynamic-coverage-guided": "#1f77b4",  # blue
-    "dfs": "#d62728",                       # red
+    "dfs": "#9467bd",                       # purple (avoid red to not clash with ERROR markers)
     "bfs": "#2ca02c",                       # green
 }
 
@@ -200,11 +200,13 @@ def plot_curves(curves: Sequence[Curve], args: argparse.Namespace) -> None:
         ax.set_title(f"JDart coverage-over-time — {names}")
     ax.grid(True, linestyle=":", alpha=0.5)
 
-    # Path-type legend (separate from the curve legend).
+    # Path-type legend (separate from the curve legend). The OK marker in the
+    # plot inherits each curve's colour, so we show it in neutral black here
+    # and spell that out in the label to avoid implying OK is any one colour.
     from matplotlib.lines import Line2D
     pt_handles = [
-        Line2D([0], [0], marker="o", linestyle="", color="tab:blue",
-               markersize=6, label="OK (new coverage)"),
+        Line2D([0], [0], marker="o", linestyle="", color="black",
+               markersize=6, label="OK (new coverage, curve colour)"),
         Line2D([0], [0], marker="x", linestyle="", color="tab:gray",
                markersize=6, label="IGNORE (pruned)"),
         Line2D([0], [0], marker="s", linestyle="", color="tab:red",
