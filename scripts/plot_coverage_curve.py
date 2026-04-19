@@ -359,14 +359,13 @@ def plot_curves(curves: Sequence[Curve], args: argparse.Namespace) -> None:
         )
     curve_legend = ax.legend(loc="lower right", fontsize=9, framealpha=0.95)
     ax.add_artist(curve_legend)
-    # Place the path-type legend below the axes, laid out horizontally, so
-    # it doesn't occlude samples near the top of the curves.
+    # Stack the path-type legend in the lower-right, directly above the
+    # curve-info legend. Both share the right edge (x=1.0 in axes fraction).
     ax.legend(
         handles=pt_handles,
-        loc="upper center",
-        bbox_to_anchor=(0.5, -0.12),
+        loc="lower right",
+        bbox_to_anchor=(1.0, 0.22),
         ncol=1,
-        borderaxespad=0.0,
         fontsize=8,
         title="Path type",
         title_fontsize=8,
