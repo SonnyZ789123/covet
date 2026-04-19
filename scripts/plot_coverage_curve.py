@@ -190,6 +190,20 @@ DEFAULT_COLOURS = {
     "bfs": "#2ca02c",                       # green
 }
 
+# Pretty display names for the folder-level labels that show up in the
+# evaluation artefact layout. Used for legend entries and the default title
+# — the internal curve.label keeps the raw folder name so colour lookups
+# still work.
+DISPLAY_NAMES = {
+    "dynamic-coverage-guided": "COVET",
+    "dfs": "DFS",
+    "bfs": "BFS",
+}
+
+
+def display_label(label: str) -> str:
+    return DISPLAY_NAMES.get(label, label)
+
 # Marker per path type — we plot markers at the sample points to make
 # OK (improvements) vs IGNORE (pruned, flat) vs ERROR visible on the curve.
 PATH_TYPE_MARKER = {
@@ -264,7 +278,7 @@ def plot_curves(curves: Sequence[Curve], args: argparse.Namespace) -> None:
             ys,
             where="post",
             linewidth=1.8,
-            label=f"{curve.label} — avg {curve.auc_avg:.2f}% · final {curve.final_coverage:.2f}%",
+            label=f"{display_label(curve.label)} — avg {curve.auc_avg:.2f}% · final {curve.final_coverage:.2f}%",
             color=colour,
         )
         plot_colour = line.get_color()
@@ -331,12 +345,12 @@ def plot_curves(curves: Sequence[Curve], args: argparse.Namespace) -> None:
         ax.set_xlabel(f"Exploration time since first path ({time_unit})")
     else:
         ax.set_xlabel(f"Elapsed JDart time ({time_unit})")
-    ax.set_ylabel("Branch coverage (%, JDart-reported)")
+    ax.set_ylabel("Branch coverage (%)")
     if args.title:
         ax.set_title(args.title)
     else:
-        names = ", ".join(c.label for c in curves)
-        ax.set_title(f"JDart coverage-over-time — {names}")
+        names = " vs ".join(display_label(c.label) for c in curves)
+        ax.set_title(f"Coverage over time — {names}")
     ax.grid(True, linestyle=":", alpha=0.5)
 
     # Path-type legend (separate from the curve legend). The OK marker in the
