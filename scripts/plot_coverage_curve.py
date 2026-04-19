@@ -336,7 +336,7 @@ def plot_curves(curves: Sequence[Curve], args: argparse.Namespace) -> None:
             color="#888888",
             linestyle="--",
             linewidth=1.0,
-            label=f"JDart branch-coverage threshold ({args.threshold:.0f}%)",
+            label=f"COVET engine branch-coverage threshold ({args.threshold:.0f}%)",
         )
 
     ax.set_xlim(left=0, right=x_max_ms / time_div)
