@@ -524,16 +524,10 @@ def main() -> None:
     apply_window_mode(curves, args.window_mode)
 
     # Text summary — goes to stdout regardless of --no-plot.
-    startup_note = (
-        "from t=0" if args.include_startup else "from t_1 (startup excluded)"
-    )
-    if args.window_mode == "extended":
-        window_note = f"integrated {startup_note} over the longest window (terminated curves extended at final coverage)"
-    elif args.window_mode == "common":
-        window_note = f"integrated {startup_note} over the shortest shared window"
-    else:
-        window_note = f"integrated {startup_note} over each curve's own window"
-
+    # The table shows each curve's NATURAL characteristics (raw T_end from
+    # telemetry, window = T_end - t_1). The shared AUC integration window
+    # (which may differ from the per-curve natural window under extended /
+    # common modes) is called out in the trailing note.
     header = (
         f"{'label':<30}  {'t_1 (ms)':>8}  {'T_end (ms)':>10}  "
         f"{'window (ms)':>11}  {'final %':>8}  {'AUC (%·ms)':>12}  {'AUC avg %':>10}"
@@ -542,11 +536,31 @@ def main() -> None:
     print("-" * len(header))
     for c in curves:
         print(
-            f"{c.label:<30}  {c.first_path_ms:>8d}  {c.auc_end_ms:>10d}  "
-            f"{c.auc_window_ms:>11d}  {c.final_coverage:>8.2f}  "
+            f"{c.label:<30}  {c.first_path_ms:>8d}  {c.end_time_ms:>10d}  "
+            f"{c.own_window_ms:>11d}  {c.final_coverage:>8.2f}  "
             f"{c.auc_raw:>12.1f}  {c.auc_avg:>10.2f}"
         )
-    print(f"({window_note})")
+
+    startup_note = (
+        "from t=0" if args.include_startup else "from t_1 (startup excluded)"
+    )
+    if args.window_mode == "extended":
+        auc_window = max(c.own_window_ms for c in curves)
+        print(
+            f"\nAUC integrated {startup_note} over {auc_window} ms (longest "
+            "natural window; curves that terminated earlier are extended at "
+            "their final coverage)"
+        )
+    elif args.window_mode == "common":
+        auc_window = min(c.own_window_ms for c in curves)
+        print(
+            f"\nAUC integrated {startup_note} over {auc_window} ms (shortest "
+            "natural window; curves that ran longer are truncated)"
+        )
+    else:
+        print(
+            f"\nAUC integrated {startup_note} over each curve's own window"
+        )
 
     if args.no_plot:
         return
