@@ -1,4 +1,4 @@
-# How to bump pathcov or JDart versions
+# How to bump pathcov or covet-engine versions
 
 ## Bumping pathcov
 
@@ -28,28 +28,28 @@
 
 6. **Update `docker-compose.yml`**: set the pathcov service image to `sonnyz789123/pathcov-image:<version>` (use the explicit version, not `:latest`)
 
-## Bumping JDart
+## Bumping covet-engine (forked JDart)
 
-1. **Update the version in the Dockerfile** (`jdart/Dockerfile`): set `JDART_VERSION` to the new version
+1. **Update the version in the Dockerfile** (`covet-engine/Dockerfile`): set `COVET_VERSION` to the new version
 
-2. **Build the image** (from inside the `jdart/` folder — must use `--platform linux/amd64` because JDart requires Java 8 on x86):
+2. **Build the image** (from inside the `covet-engine/` folder — must use `--platform linux/amd64` because the engine requires Java 8 on x86):
    ```bash
-   docker build --platform linux/amd64 -t jdart-image:<version> .
+   docker build --platform linux/amd64 -t covet-engine-image:<version> .
    ```
 
 3. **Tag for Docker Hub**:
    ```bash
-   docker tag jdart-image:<version> sonnyz789123/jdart-image:<version>
-   docker tag jdart-image:<version> sonnyz789123/jdart-image:latest
+   docker tag covet-engine-image:<version> sonnyz789123/covet-engine-image:<version>
+   docker tag covet-engine-image:<version> sonnyz789123/covet-engine-image:latest
    ```
 
 4. **Push both tags**:
    ```bash
-   docker push sonnyz789123/jdart-image:<version>
-   docker push sonnyz789123/jdart-image:latest
+   docker push sonnyz789123/covet-engine-image:<version>
+   docker push sonnyz789123/covet-engine-image:latest
    ```
 
-5. **Update `docker-compose.yml`**: set the jdart service image to `sonnyz789123/jdart-image:<version>` (use the explicit version, not `:latest`)
+5. **Update `docker-compose.yml`**: set the covet-engine service image to `sonnyz789123/covet-engine-image:<version>` (use the explicit version, not `:latest`)
 
 ## Conventions
 

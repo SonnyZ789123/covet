@@ -11,7 +11,7 @@ block-diff/shared
 output/
 
 # Ignore generated config files
-jdart/configs/sut_gen.jpf
+covet-engine/configs/sut_gen.jpf
 pathcov/configs
 
 docker-compose.deps.yml

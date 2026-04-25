@@ -7,7 +7,7 @@ import yaml
 from detect_deps_classpath import detect_build_tool, detect_runtime_deps_classpath, detect_test_deps_classpath, deps_dir_from_build_tool
 from rewrite_classpath import rewrite_classpath
 from generate_deps_compose import generate_deps_compose
-from jdart_format_classpath import jdart_format_classpath
+from covet_format_classpath import covet_format_classpath
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -47,9 +47,9 @@ if "runtime_deps_classpath" in sut_cfg["sut"]:
 
 junit_options = sut_cfg["sut"].get("junit_options", None)
 
-jdart_tests_dir_out = None
+covet_tests_dir_out = None
 if sut_cfg["test_generation"] is not None and "generated_tests_dir_out" in sut_cfg["test_generation"]:
-    jdart_tests_dir_out = sut_cfg["test_generation"]["generated_tests_dir_out"]
+    covet_tests_dir_out = sut_cfg["test_generation"]["generated_tests_dir_out"]
 
 # -------------------------------
 # Load environment variables
@@ -157,30 +157,30 @@ pathcov_out.parent.mkdir(parents=True, exist_ok=True)
 pathcov_out.write_text(pathcov_cfg)
 
 # -------------------------------
-# Generate JDart config
+# Generate covet-engine config
 # -------------------------------
-jdart_method = f"{cls}.{method}({param_named})"
+covet_method = f"{cls}.{method}({param_named})"
 
-jdart_cfg = f"""# ============================================================
+covet_cfg = f"""# ============================================================
 # AUTO-GENERATED — DO NOT EDIT
 # ============================================================
 # Compiled classes
-classpath={jdart_format_classpath(compiled_root, runtime_deps_cp, has_runtime_deps)}
+classpath={covet_format_classpath(compiled_root, runtime_deps_cp, has_runtime_deps)}
 
 # Class under analysis
 target={entry_class}
 
-concolic.method.{method}={jdart_method}
+concolic.method.{method}={covet_method}
 concolic.method={method}
 
 # Generated tests output
-jdart.tests.dir={f"{container_sut_dir}/{jdart_tests_dir_out}" if jdart_tests_dir_out else f"{container_output_dir}/generated-tests"}
+jdart.tests.dir={f"{container_sut_dir}/{covet_tests_dir_out}" if covet_tests_dir_out else f"{container_output_dir}/generated-tests"}
 """
 
-jdart_out = ROOT / "jdart/configs/sut_gen.jpf"
-jdart_out.parent.mkdir(parents=True, exist_ok=True)
-jdart_out.write_text(jdart_cfg)
+covet_out = ROOT / "covet-engine/configs/sut_gen.jpf"
+covet_out.parent.mkdir(parents=True, exist_ok=True)
+covet_out.write_text(covet_cfg)
 
 print("[OK] Generated:")
 print(f"  - {pathcov_out}")
-print(f"  - {jdart_out}")
+print(f"  - {covet_out}")

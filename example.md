@@ -74,7 +74,7 @@ Setting the `project_prefixes` is optional and helps with reducing the analysis 
 
 ## 4. Bind-mount data folder
 
-We want to inspect the coverage graph of the `pathcov` component. Create a `development/data` folder and bind-mount it to the pathcov and jdart container. Add the following in `docker-compose.override.yml`. 
+We want to inspect the coverage graph of the `pathcov` component. Create a `development/data` folder and bind-mount it to the pathcov and covet-engine container. Add the following in `docker-compose.override.yml`. 
 
 ```yaml
 services:
@@ -85,7 +85,7 @@ services:
     volumes:
       - ./development/data:/data
 
-  jdart:
+  covet-engine:
     volumes:
       - ./development/data:/data
 ```
@@ -104,7 +104,7 @@ or if it is not an executable, run:
 sh ./run_pipeline.sh
 ```
 
-This will pull the `pathcov` and `jdart` images from Docker hub, and this can take some minutes for the first time. 
+This will pull the `pathcov` and `covet-engine` images from Docker hub, and this can take some minutes for the first time. 
 
 This will generate the necessary config specific to the `pathcov` preprocessing, which will create `coverage_graph.svg` inside `./development/data/visualization/icfg/coverage`. 
 

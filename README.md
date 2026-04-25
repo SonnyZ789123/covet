@@ -1,7 +1,7 @@
 # Coverage-Guided Concolic Pipeline
 
 An end-to-end, containerized pipeline for **coverage-guided concolic test generation** in Java.
-This project integrates **static CFG/ICFG analysis**, **runtime coverage instrumentation**, **coverage graph construction**, and **heuristic-guided concolic execution with JDart** to systematically discover uncovered execution paths.
+This project integrates **static CFG/ICFG analysis**, **runtime coverage instrumentation**, **coverage graph construction**, and **heuristic-guided concolic execution with covet-engine (forked JDart)** to systematically discover uncovered execution paths.
 
 The pipeline is designed to be **reproducible**, **configurable**, and **tool-agnostic**, with a single SUT specification.
 
@@ -15,7 +15,7 @@ The pipeline consists of two main stages:
    * Extracts line and branch coverage
    * Builds coverage graphs
 
-2. **JDart stage**
+2. **covet-engine stage** (forked JDart)
    * Uses coverage information to guide concolic execution
    * Explores uncovered and partially covered execution paths
    * Generates new JUnit test cases to cover those paths
@@ -29,14 +29,14 @@ All stages are fully containerized and orchestrated via Docker Compose.
 .
 ├── configs
 │   └── sut.yml                   # Canonical SUT specification
-├── docker-compose.yml            # Orchestrates Pathcov and JDart containers
+├── docker-compose.yml            # Orchestrates Pathcov and covet-engine containers
 ├── development
 │   └── data                      # Developmnet: bind-mount for output 
-├── jdart
+├── covet-engine                  # Forked JDart, packaged as the COVET concolic engine
 │   ├── Dockerfile
 │   └── configs
-│       ├── jdart.jpf             # Default JDart config
-│       ├── sut.jpf               # Base JDart config (user-editable)
+│       ├── jdart.jpf             # Defaults for the upstream jdart.* JPF property namespace
+│       ├── sut.jpf               # Base config (user-editable)
 │       ├── sut_gen.jpf           # AUTO-GENERATED from sut.yml
 │       └── coverage_heuristic.config
 ├── pathcov
@@ -128,17 +128,17 @@ You only edit **this file** to change the SUT or the analyzed method.
 
 All tool-specific configurations are **derived automatically** from this file.
 
-## Step 3: (Optional) Configure JDart behavior
+## Step 3: (Optional) Configure covet-engine behavior
 
-You may customize JDart-specific options in:
+You may customize engine-specific options in:
 
 ```
-jdart/configs/sut.jpf
+covet-engine/configs/sut.jpf
 ```
 
 This file is **not generated** and is intended for manual tuning.
 
-### Examples of useful JDart options
+### Examples of useful engine options
 
 Enable fine-grained logging:
 
@@ -188,14 +188,14 @@ jdart.coverage.block_map_path=/data/blockmaps/icfg_block_map.json
 jdart.coverage.ignore_covered_paths=true
 ```
 
-When a coverage tracker is available, JDart emits an `elapsed=Xms branch_coverage=Y%`
+When a coverage tracker is available, covet-engine emits an `elapsed=Xms branch_coverage=Y%`
 line on the `jdart.evaluation` logger every time branch coverage changes:
 
 ```properties
 log.info=jdart.evaluation,jdart
 ```
 
-During execution, this file is **combined** with the auto-generated JDart configuration (`sut_gen.jpf`).
+During execution, this file is **combined** with the auto-generated covet-engine configuration (`sut_gen.jpf`).
 
 Full `sut.jpf` configuration example:
 ```
@@ -237,7 +237,7 @@ z3.timeout=1000
 jdart.tests.suitename=CustomSuiteNameTest
 
 # The out dir for the generated test suite (default set to data/generated-tests of your sut dir)
-# Note that JDart runs in a container where the sut is bind-mounted to /sut
+# Note that covet-engine runs in a container where the sut is bind-mounted to /sut
 jdart.tests.dir=/sut/other-data-dir/tests
 
 # The package name of the test suite (default set to the package of the method under test) 
@@ -267,7 +267,7 @@ This command will:
 1. Generate tool-specific configs from `configs/sut.yml`
 2. Start the Docker containers
 3. Run the Pathcov stage
-4. Run JDart with the generated configuration
+4. Run covet-engine with the generated configuration
 
 No manual Docker commands are required.
 
@@ -308,16 +308,16 @@ services:
       - ./development/data:/data
       - ../pathcov:/pathcov-project/pathcov
 
-  jdart:
+  covet-engine:
     environment:
       - ENV=dev
 
     volumes:
       - ./development/data:/data
-      - ../../jdart/:/jdart-project/jdart
+      - ../covet-engine:/covet-engine-project/covet-engine
 ```
 
-It is important that the /data mouts between the pathcov and the jdart service are the same.
+It is important that the /data mouts between the pathcov and the covet-engine service are the same.
 
 In your `.env` file, set `ENV=dev` and run the pipeline.
 
@@ -341,11 +341,11 @@ No script changes are required.
     * `/configs` (Pathcov configs)
     * `/scripts` (Pathcov scripts)
     * `/data` (shared artifacts)
-* **jdart container**
-  * Runs JDart/JPF
+* **covet-engine container**
+  * Runs covet-engine (forked JDart) on JPF
   * Mounts:
     * `/sut` (SUT)
-    * `/configs` (JDart configs)
+    * `/configs` (covet-engine configs)
     * `/data` (shared artifacts)
 
 Containers do **not** communicate directly.
@@ -365,7 +365,7 @@ SUT_DIR=$HOME/dev/your-sut-directory
 EOF
 
 vim configs/sut.yml
-vim jdart/configs/sut.jpf   # optional
+vim covet-engine/configs/sut.jpf   # optional
 
 ./run_pipeline.sh
 
@@ -384,7 +384,7 @@ services:
     volumes:
       - ./development/data:/data
 
-  jdart:
+  covet-engine:
     environment:
       - ENV=dev
 

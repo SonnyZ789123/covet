@@ -19,8 +19,8 @@ services:
     stdin_open: true
     tty: true
 
-  jdart:
-    image: sonnyz789123/jdart-image:4.4.0
+  covet-engine:
+    image: sonnyz789123/covet-engine-image:4.4.0
     platform: linux/amd64
     environment:
       - ENV=prod
@@ -30,12 +30,13 @@ services:
       - SUT_DIR=${CONTAINER_SUT_DIR}
       - DEPS_DIR=${CONTAINER_DEPS_DIR}
       - OUTPUT_DIR=${CONTAINER_OUTPUT_DIR}
-    container_name: jdart
+    container_name: covet-engine
     volumes:
       - pipeline-data:${CONTAINER_DATA_DIR}
       - ./jdart/configs:${CONTAINER_CONFIGS_DIR}:ro
+      - ./covet-engine/configs:${CONTAINER_CONFIGS_DIR}:ro
       - ./output:${CONTAINER_OUTPUT_DIR}
-    working_dir: /jdart-project
+    working_dir: /covet-engine-project
     stdin_open: true
     tty: true
 

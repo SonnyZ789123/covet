@@ -25,7 +25,7 @@ def main():
     volumes:
       - {sut_dir}:{container_sut_dir}
 
-  jdart:
+  covet-engine:
     volumes:
       - {sut_dir}:{container_sut_dir}
 """

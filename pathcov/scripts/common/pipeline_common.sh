@@ -26,7 +26,7 @@ source "$SUT_CONFIG_FILE"
 # ============================================================
 # FIXED CONFIG
 # ============================================================
-# Shared data volume with the JDart container
+# Shared data volume with the covet-engine container
 readonly DATA_DIR="${2:-$DATA_DIR}"
 
 # Tools inside image

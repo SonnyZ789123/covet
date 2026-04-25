@@ -18,11 +18,11 @@ fi
 ENVIRONMENT="${ENV:-prod}"
 
 PATHCOV_SERVICE="pathcov"
-JDART_SERVICE="jdart"
+COVET_SERVICE="covet-engine"
 
 PATHCOV_SCRIPT="${CONTAINER_SCRIPTS_DIR}/run_pipeline.sh"
 SUT_CONFIG="${CONTAINER_CONFIGS_DIR}/sut.config"
-JDART_JPF_CONFIG="${CONTAINER_CONFIGS_DIR}/sut.jpf"
+COVET_JPF_CONFIG="${CONTAINER_CONFIGS_DIR}/sut.jpf"
 
 DATA_DIR="${CONTAINER_DATA_DIR}"
 
@@ -121,8 +121,8 @@ main() {
   log "⚙️ Running pathcov stage"
   compose_exec "$PATHCOV_SERVICE" "$PATHCOV_SCRIPT" "$SUT_CONFIG" "$DATA_DIR"
 
-  log "⚙️ Running JDart / JPF stage"
-  compose_exec "$JDART_SERVICE" /jdart-project/jpf-core/bin/jpf "$JDART_JPF_CONFIG"
+  log "⚙️ Running covet-engine / JPF stage"
+  compose_exec "$COVET_SERVICE" /covet-engine-project/jpf-core/bin/jpf "$COVET_JPF_CONFIG"
 
   log "✅ Pipeline completed successfully"
 }

@@ -19,7 +19,7 @@ def generate_deps_compose(deps_dir: str, container_deps_dir: str) -> None:
     volumes:
       - {deps_dir}:{container_deps_dir}:ro
 
-  jdart:
+  covet-engine:
     volumes:
       - {deps_dir}:{container_deps_dir}:ro
 """

@@ -9,10 +9,10 @@ services:
       - ./development/data:/data
       - ../pathcov:/pathcov-project/pathcov
 
-  jdart:
+  covet-engine:
     environment:
       - ENV=dev
 
     volumes:
       - ./development/data:/data
-      - ../jdart:/jdart-project/jdart
+      - ../covet-engine:/covet-engine-project/covet-engine
