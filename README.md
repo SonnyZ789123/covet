@@ -355,7 +355,7 @@ The host orchestrates execution via `run_pipeline.sh`.
 
 ```bash
 git clone <repo>
-cd coverage-guided-concolic-pipeline
+cd covet
 
 python3 -m pip install -r requirements.txt
 

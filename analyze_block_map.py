@@ -13,12 +13,12 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 BLOCK_MAP_PATH = Path(
-    "/Users/yoran.mertens/dev/master-thesis/coverage-guided-concolic-pipeline"
+    "/Users/yoran.mertens/dev/master-thesis/covet"
     "/development/data/blockmaps/icfg_block_map.json"
 )
 
 COVERAGE_DATA_PATH = Path(
-    "/Users/yoran.mertens/dev/master-thesis/coverage-guided-concolic-pipeline"
+    "/Users/yoran.mertens/dev/master-thesis/covet"
     "/development/data/coverage/coverage_data.json"
 )
 

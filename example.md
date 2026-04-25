@@ -4,7 +4,7 @@
 
 Clone this repository: 
 ```bash
-git clone https://github.com/SonnyZ789123/coverage-guided-concolic-pipeline.git
+git clone https://github.com/SonnyZ789123/covet.git
 ```
 
 Clone the repository holding the example program:

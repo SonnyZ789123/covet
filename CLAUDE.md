@@ -4,7 +4,7 @@
 
 ## Project structure
 
-This repo (`coverage-guided-concolic-pipeline`) is the orchestrator for the full test generation pipeline. It does **not** contain the pathcov or covet-engine (forked JDart) Java source code — those live in sibling repos. This project only holds Docker image definitions, shell/Python scripts for orchestration, and configuration templates.
+This repo (`covet`) is the orchestrator for the full test generation pipeline. It does **not** contain the pathcov or covet-engine (forked JDart) Java source code — those live in sibling repos. This project only holds Docker image definitions, shell/Python scripts for orchestration, and configuration templates.
 
 ```
 .
